@@ -1,4 +1,4 @@
-from powerstream.src.models.outflow import Outflow, TimePeriod, ValueRow, Header, Meter
+from src.models.outflow import Outflow, TimePeriod, ValueRow, Header, Meter
 import xml.etree.ElementTree as ET
 
 

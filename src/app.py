@@ -1,6 +1,6 @@
 from flask import Flask
 
-from powerstream.src.parser import Parser
+from src.parser import Parser
 
 app = Flask(__name__)
 
