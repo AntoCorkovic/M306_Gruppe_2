@@ -6,17 +6,10 @@
   <component name="ChangeListManager">
     <list default="true" id="2918e7c7-67ba-4f56-8652-99e810174299" name="Changes" comment="model outflow and parser outflow">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/powerstream/src/.idea/workspace.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/.idea/inspectionProfiles/profiles_settings.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/.idea/misc.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/.idea/modules.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/.idea/powerstream.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/.idea/vcs.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/models/outflow.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/parser.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/powerstream/src/app.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/powerstream/src/models/inflow.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/powerstream/src/models/outflow.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/powerstream/src/parser.py" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -57,13 +50,20 @@
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="S:\BZZ\IT-Module\M306\M306_Gruppe_2" />
+    </key>
+  </component>
   <component name="RunManager">
     <configuration name="app (1)" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="M306_Gruppe_2" />
@@ -102,6 +102,7 @@
       <option name="presentableId" value="Default" />
       <updated>1717158104753</updated>
       <workItem from="1717158109153" duration="6418000" />
+      <workItem from="1717166231737" duration="43000" />
     </task>
     <task id="LOCAL-00001" summary="solution structure">
       <option name="closed" value="true" />
@@ -155,7 +156,8 @@
     <MESSAGE value="solution structure" />
     <MESSAGE value="solution structure update error by quentin" />
     <MESSAGE value="model outflow and parser outflow" />
-    <option name="LAST_COMMIT_MESSAGE" value="model outflow and parser outflow" />
+    <MESSAGE value="update path" />
+    <option name="LAST_COMMIT_MESSAGE" value="update path" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -184,7 +186,7 @@
     </breakpoint-manager>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/M306_Gruppe_2$app.coverage" NAME="app Coverage Results" MODIFIED="1717165950888" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src" />
     <SUITE FILE_PATH="coverage/M306_Gruppe_2$app__1_.coverage" NAME="app (1) Coverage Results" MODIFIED="1717165930812" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/powerstream/src" />
-    <SUITE FILE_PATH="coverage/M306_Gruppe_2$app.coverage" NAME="app Coverage Results" MODIFIED="1717158308111" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/powerstream/sac" />
   </component>
 </project>
