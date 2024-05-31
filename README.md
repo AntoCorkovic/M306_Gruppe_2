@@ -20,38 +20,37 @@ ID742 = Bezug
 ```ruby
 <rsm:DocumentID>eslevu156407_BR2294_ID735</rsm:DocumentID>
 ```
-Die DocumentID ist die eindeutige Identifizierung des Zählers.
+> Die DocumentID ist die eindeutige Identifizierung des Zählers.
 ```ruby
 <rsm:Interval>
 <rsm:StartDateTime>2019-09-24T22:00:00Z</rsm:StartDateTime>
 <rsm:EndDateTime>2019-09-25T22:00:00Z</rsm:EndDateTime>
 </rsm:Interval>
 ```
-Innerhalb der Interval-Tags finden Sie Start und Endzeit in UTC der Zählerwerte.
+> Innerhalb der Interval-Tags finden Sie Start und Endzeit in UTC der Zählerwerte.
 ```ruby
 <rsm:Resolution>
 <rsm:Resolution>15</rsm:Resolution>
 <rsm:Unit>MIN</rsm:Unit>
 </rsm:Resolution>
 ```
-Im Resolution-Tag steht die Auflösung (Zeitlicher Abstand der einzelnen Messwerte)
+> Im Resolution-Tag steht die Auflösung (Zeitlicher Abstand der einzelnen Messwerte)
 ```ruby
 <rsm:Observation>
   <rsm:Position>
     <rsm:Sequence>1</rsm:Sequence>
 ```
-Gibt die Nummer des Messwertes an.
+> Gibt die Nummer des Messwertes an.
 ```ruby
 </rsm:Position>
 <rsm:Volume>2.250</rsm:Volume>
 ```
-Gibt die gemessene Menge/Volumen innerhalb der letzten Resolution wieder
+> Gibt die gemessene Menge/Volumen innerhalb der letzten Resolution wieder
 ```ruby
 <rsm:Condition>21</rsm:Condition>
 </rsm:Observation>
 ```
-Am Ende des Files befinden sich mehrere Observation-Tags. Diese geben jeweils den Messwert
-im jeweiligen Zeitintervall an.
+> Am Ende des Files befinden sich mehrere Observation-Tags. Diese geben jeweils den Messwert im jeweiligen Zeitintervall an.
 
 
 
