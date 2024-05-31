@@ -60,22 +60,22 @@ im jeweiligen Zeitintervall an.
 ```ruby
 <TimePeriod end="2019-01-01T00:00:00">
 ```
-
+> Der Tag TimePeriod gibt an, von wann die Messwerte stammen.
 ```ruby
-<ValueRow obis="1-1:1.8.1" value="4755.3000" status="V"/>
-<ValueRow obis="1-1:1.8.2" value="14460.9000" status="V"/>
-<ValueRow obis="1-1:2.8.1" value="8258.1000" status="V"/>
-<ValueRow obis="1-1:2.8.2" value="3543.1000" status="V"/>
-<ValueRow obis="1-1:5.8.1" value="293.0000" status="V"/>
-<ValueRow obis="1-1:5.8.2" value="580.0000" status="V"/>
-<ValueRow obis="1-1:6.8.1" value="33.0000" status="V"/>
-<ValueRow obis="1-1:6.8.2" value="8.0000" status="V"/>
-<ValueRow obis="1-1:7.8.1" value="406.0000" status="V"/>
-<ValueRow obis="1-1:7.8.2" value="163.0000" status="V"/>
-<ValueRow obis="1-1:8.8.1" value="500.0000" status="V"/>
-<ValueRow obis="1-1:8.8.2" value="1685.0000" status="V"/>
+  <ValueRow obis="1-1:1.8.1" value="4755.3000" status="V"/>
+  <ValueRow obis="1-1:1.8.2" value="14460.9000" status="V"/>
+  <ValueRow obis="1-1:2.8.1" value="8258.1000" status="V"/>
+  <ValueRow obis="1-1:2.8.2" value="3543.1000" status="V"/>
+  <ValueRow obis="1-1:5.8.1" value="293.0000" status="V"/>
+  <ValueRow obis="1-1:5.8.2" value="580.0000" status="V"/>
+  <ValueRow obis="1-1:6.8.1" value="33.0000" status="V"/>
+  <ValueRow obis="1-1:6.8.2" value="8.0000" status="V"/>
+  <ValueRow obis="1-1:7.8.1" value="406.0000" status="V"/>
+  <ValueRow obis="1-1:7.8.2" value="163.0000" status="V"/>
+  <ValueRow obis="1-1:8.8.1" value="500.0000" status="V"/>
+  <ValueRow obis="1-1:8.8.2" value="1685.0000" status="V"/>
 ```
-
+> Pro Zähler, welcher über den obis-code identifiziert wird, gibt es einen value welcher für den Zählerstand zum Zeitpunkt in der TimePeriod steht.
 ```ruby
 </TimePeriod>
 ```
