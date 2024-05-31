@@ -1,0 +1,26 @@
+# Ignore macOS system files
+.DS_Store
+
+# Ignore Windows system files
+Thumbs.db
+ehthumbs.db
+
+# Ignore node_modules directory (for Node.js projects)
+node_modules/
+
+# Ignore Python compiled files
+*.pyc
+__pycache__/
+
+# Ignore environment variables file
+.env
+
+# Ignore .idea folder (JetBrains IDEs)
+.idea/
+
+# Ignore log files
+*.log
+
+# Ignore build directories
+dist/
+build/
