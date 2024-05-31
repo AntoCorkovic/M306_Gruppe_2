@@ -13,3 +13,8 @@ Muss:
 ## Programmier Tipps vom Bünzli
 ID735 = Einspeisung
 ID742 = Bezug
+
+
+```ruby
+<rsm:DocumentID>eslevu156407_BR2294_ID735</rsm:DocumentID>
+```
