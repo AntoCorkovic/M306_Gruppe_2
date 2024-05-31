@@ -12,6 +12,7 @@ Muss:
 
 ## Programmier Tipps vom Bünzli
 ID735 = Einspeisung
+<br>
 ID742 = Bezug
 
 
@@ -21,6 +22,7 @@ ID742 = Bezug
 <rsm:DocumentID>eslevu156407_BR2294_ID735</rsm:DocumentID>
 ```
 > Die DocumentID ist die eindeutige Identifizierung des Zählers.
+<br>
 ```ruby
 <rsm:Interval>
 <rsm:StartDateTime>2019-09-24T22:00:00Z</rsm:StartDateTime>
