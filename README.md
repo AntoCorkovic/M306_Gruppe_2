@@ -1,6 +1,6 @@
 # PowerStream
 
-#Softwareumfang
+# Softwareumfang
 Entwerfen und Programmieren Sie eine Software welche:
 Muss:
 • sdat-Files einlesen kann
@@ -10,6 +10,6 @@ Muss:
 • Die Daten in einem Zählerstandsdiagramm visualisieren kann
 • Die Daten als csv exportieren kann
 
-#Programmier Tipps vom Bünzli
+# Programmier Tipps vom Bünzli
 ID735 = Einspeisung
 ID742 = Bezug
