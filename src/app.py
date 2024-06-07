@@ -7,23 +7,20 @@ app = Flask(__name__)
 
 @app.route('/')
 def hello_world():  # put application's code here
-    parser = Parser()
+    # parser = Parser()
 
-    counterstands = parser.parse_counterstands()
-    try:
-       consumptionvalues = parser.parse_consumptionvalues()
-    except Exception as e:
-        print(e)
-    print(consumptionvalues)
-
-
+    # counterstands = parser.parse_counterstands()
+    # try:
+    #     consumptionvalues = parser.parse_consumptionvalues()
+    # except Exception as e:
+    #     print(e)
+    # print(consumptionvalues)
 
     return 'Hello World!'
 
 
 @app.route('/ui')
 def ui():  # put application's code here
-
 
     return render_template('frontend/index.html')
 
