@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Energy Consumption and Inflow</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f9fafb;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 20px;
+            padding: 20px;
+            background: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+        .swiper-container {
+            width: 100%;
+            height: 500px; /* Set a fixed height to prevent stretching */
+        }
+        .swiper-slide {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+        }
+        .chart-container {
+            width: 100%;
+            height: 100%;
+            padding: 20px;
+        }
+        canvas {
+            width: 100% !important;
+            height: auto !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-2xl font-bold mb-4">Energy Consumption and Inflow</h1>
+        <div class="swiper-container">
+            <div class="swiper-wrapper">
+                <div class="swiper-slide">
+                    <div class="chart-container">
+                        <canvas id="consumptionChart"></canvas>
+                    </div>
+                </div>
+                <div class="swiper-slide">
+                    <div class="chart-container">
+                        <canvas id="inflowChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="swiper-pagination"></div>
+            <div class="swiper-button-prev"></div>
+            <div class="swiper-button-next"></div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+    <script>
+        const consumptionCtx = document.getElementById('consumptionChart').getContext('2d');
+        const inflowCtx = document.getElementById('inflowChart').getContext('2d');
+
+        // Generate 15-minute intervals for a day
+        const generateTimeLabels = () => {
+            const labels = [];
+            for (let h = 0; h < 24; h++) {
+                for (let m = 0; m < 60; m += 15) {
+                    labels.push(`${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`);
+                }
+            }
+            return labels;
+        };
+
+        const timeLabels = generateTimeLabels();
+
+        // Generate realistic consumption data
+        const generateConsumptionData = () => {
+            const data = [];
+            for (let i = 0; i < timeLabels.length; i++) {
+                const hour = Math.floor(i / 4);
+                if (hour < 6) {
+                    data.push(data.length > 0 ? data[data.length - 1] + Math.random() * 0.2 : 0);
+                } else if (hour < 9) {
+                    data.push(data[data.length - 1] + Math.random() * 0.8);
+                } else if (hour < 18) {
+                    data.push(data[data.length - 1] + Math.random() * 1.2);
+                } else if (hour < 22) {
+                    data.push(data[data.length - 1] + Math.random() * 0.6);
+                } else {
+                    data.push(data[data.length - 1] + Math.random() * 0.2);
+                }
+            }
+            return data;
+        };
+
+        const consumptionData = {
+            labels: timeLabels,
+            datasets: [{
+                label: 'Consumption',
+                data: generateConsumptionData(),
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1,
+                fill: false,
+                tension: 0.1,
+                pointRadius: 5,
+                pointHoverRadius: 10,
+                showLine: true // Connect the points with lines
+            }]
+        };
+
+        const inflowData = {
+            labels: timeLabels,
+            datasets: [{
+                label: 'Inflow',
+                data: [1, 0.8, 1.1, 0.7, 1.2, 0.9, 1.3, 0.6, 1.5, 1.0, 0.9, 1.3, 1.4, 0.7, 1.2, 0.8, 1.0, 1.5, 1.2, 0.9, 1.3, 0.7, 1.2, 0.9, 1.3, 0.6, 1.5, 1.0, 0.9, 1.3, 1.4, 0.7, 1.2, 0.8, 1.0, 1.5, 1.2, 0.9, 1.3, 0.7, 1.2, 0.9, 1.3, 0.6, 1.5, 1.0, 0.9, 1.3, 1.4, 0.7, 1.2, 0.8, 1.0, 1.5, 1.2, 0.9, 1.3, 0.7, 1.2, 0.9, 1.3, 0.6, 1.5, 1.0, 0.9, 1.3, 1.4, 0.7, 1.2, 0.8, 1.0, 1.5, 1.2, 0.9, 1.3, 0.7, 1.2, 0.9, 1.3, 0.6, 1.5, 1.0, 0.9, 1.3, 1.4, 0.7, 1.2, 0.8, 1.0, 1.5],
+                backgroundColor: 'rgba(153, 102, 255, 0.2)',
+                borderColor: 'rgba(153, 102, 255, 1)',
+                borderWidth: 1
+            }]
+        };
+
+        const consumptionChart = new Chart(consumptionCtx, {
+            type: 'line',
+            data: consumptionData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        type: 'category'
+                    },
+                    y: {
+                        beginAtZero: true,
+                        suggestedMin: 0
+                    }
+                }
+            }
+        });
+
+        const inflowChart = new Chart(inflowCtx, {
+            type: 'bar',
+            data: inflowData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        // Initialize Swiper
+        const swiper = new Swiper('.swiper-container', {
+            navigation: {
+                nextEl: '.swiper-button-next',
+                prevEl: '.swiper-button-prev',
+            },
+            pagination: {
+                el: '.swiper-pagination',
+                clickable: true,
+            },
+            slidesPerView: 1,
+            spaceBetween: 0,
+        });
+    </script>
+</body>
+</html>

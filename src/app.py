@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, render_template
 
 from src.parser import Parser
 
@@ -19,6 +19,13 @@ def hello_world():  # put application's code here
 
 
     return 'Hello World!'
+
+
+@app.route('/ui')
+def ui():  # put application's code here
+
+
+    return render_template('frontend/index.html')
 
 
 if __name__ == '__main__':
