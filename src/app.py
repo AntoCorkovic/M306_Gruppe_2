@@ -9,12 +9,15 @@ app = Flask(__name__)
 def hello_world():  # put application's code here
     parser = Parser()
 
-    #outflow_data = parser.parse_Outflow()
+    counterstands = parser.parse_counterstands()
     try:
-        inflow_data = parser.parse_Inflow()
+       consumptionvalues = parser.parse_consumptionvalues()
     except Exception as e:
         print(e)
-    print(inflow_data)
+    print(consumptionvalues)
+
+
+
     return 'Hello World!'
 
 

@@ -1,4 +1,5 @@
 from dataclasses import dataclass, field
+from datetime import datetime
 from typing import List, Optional
 
 
@@ -17,21 +18,6 @@ class TimePeriod:
 
 
 @dataclass
-class Meter:
-    factoryNo: str
-    internalNo: str
+class Counterstands:
+    created: datetime = field(default_factory=datetime.now)
     timePeriods: List[TimePeriod] = field(default_factory=list)
-
-
-@dataclass
-class Header:
-    version: str
-    created: str
-    swSystemNameFrom: str
-    swSystemNameTo: str
-
-
-@dataclass
-class Outflow:
-    header: Header
-    meters: List[Meter] = field(default_factory=list)
