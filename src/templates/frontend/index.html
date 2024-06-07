@@ -5,6 +5,7 @@
     <title>Energy Consumption and Inflow</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -49,6 +50,32 @@
         canvas {
             width: 100% !important;
             height: auto !important;
+        }
+        .swiper-button-prev, .swiper-button-next {
+            color: #000; /* Set the arrow color */
+            background: rgba(255, 255, 255, 0.8); /* Background for better visibility */
+            border-radius: 50%;
+            padding: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 40px;
+            height: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .swiper-button-prev:hover, .swiper-button-next:hover {
+            background: rgba(255, 255, 255, 1); /* Fully opaque background on hover */
+        }
+        .swiper-button-prev:after, .swiper-button-next:after {
+            font-family: 'Font Awesome 5 Free';
+            font-weight: 900;
+            font-size: 1.5rem;
+        }
+        .swiper-button-prev:after {
+            content: '\f104'; /* Font Awesome left arrow */
+        }
+        .swiper-button-next:after {
+            content: '\f105'; /* Font Awesome right arrow */
         }
     </style>
 </head>
