@@ -1,12 +1,12 @@
 from flask import Flask, render_template
 
-from src.parser import Parser
+# from src.parser import Parser
 
 app = Flask(__name__)
 
 
 @app.route('/')
-def hello_world():  # put application's code here
+def hello_world(): 
     # parser = Parser()
 
     # counterstands = parser.parse_counterstands()
@@ -20,7 +20,7 @@ def hello_world():  # put application's code here
 
 
 @app.route('/ui')
-def ui():  # put application's code here
+def ui():
 
     return render_template('frontend/index.html')
 

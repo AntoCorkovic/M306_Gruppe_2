@@ -1,6 +1,5 @@
 import os
-import xml.etree.ElementTree as ET
-
+import xml.etree.ElementTree as elementTree
 from src.models.counterstands import *
 from src.models.consumptionvalues import *
 
@@ -14,7 +13,7 @@ class Parser:
 
         for file in os.listdir(self.OUTFLOW_DIRECTORY):
             try:
-                tree = ET.parse(os.path.join(self.OUTFLOW_DIRECTORY, file))
+                tree = elementTree.parse(os.path.join(self.OUTFLOW_DIRECTORY, file))
                 root = tree.getroot()
 
                 # Parsing Header
@@ -43,7 +42,7 @@ class Parser:
 
                     counterstands_dict[created_date].timePeriods.append(time_period)
 
-            except ET.ParseError as e:
+            except elementTree.ParseError as e:
                 print(f"Error parsing {file}: {e}")
             except Exception as e:
                 print(f"Unexpected error with {file}: {e}")
@@ -53,12 +52,11 @@ class Parser:
 
         return counterstands_list
 
-
     def parse_consumptionvalues(self) -> InflowAndOutflow():
         inflowandoutflowlist = InflowAndOutflow()
         for file in os.listdir(self.INFLOW_DIRECTORY):
             try:
-                tree = ET.parse(self.INFLOW_DIRECTORY + '/' + file)
+                tree = elementTree.parse(self.INFLOW_DIRECTORY + '/' + file)
                 root = tree.getroot()
                 ns = {'rsm': 'http://www.strom.ch'}
 
@@ -82,16 +80,20 @@ class Parser:
                     )
                     observations.append(observation)
                 consumptionvalues.Observations = observations
-                consumptionvalues.StartDateTime = datetime.strptime(metering_data_elem.find('rsm:Interval/rsm:StartDateTime', ns).text, "%Y-%m-%dT%H:%M:%SZ")
-                consumptionvalues.EndDateTime = datetime.strptime(metering_data_elem.find('rsm:Interval/rsm:EndDateTime', ns).text, "%Y-%m-%dT%H:%M:%SZ")
+                consumptionvalues.StartDateTime = datetime.strptime(
+                    metering_data_elem.find('rsm:Interval/rsm:StartDateTime', ns).text, "%Y-%m-%dT%H:%M:%SZ")
+                consumptionvalues.EndDateTime = datetime.strptime(
+                    metering_data_elem.find('rsm:Interval/rsm:EndDateTime', ns).text, "%Y-%m-%dT%H:%M:%SZ")
                 consumptionvalues.Resolution = int(metering_data_elem.find('rsm:Resolution/rsm:Resolution', ns).text)
                 consumptionvalues.Unit = metering_data_elem.find('rsm:Resolution/rsm:Unit', ns).text
 
                 if consumptionvalues.DocumentID[0].split('_')[-1] == "ID735":
-                    if not any(existing.StartDateTime == consumptionvalues.StartDateTime for existing in inflowandoutflowlist.Outflows):
+                    if not any(existing.StartDateTime == consumptionvalues.StartDateTime for existing in
+                               inflowandoutflowlist.Outflows):
                         inflowandoutflowlist.Outflows.append(consumptionvalues)
                 elif consumptionvalues.DocumentID[0].split('_')[-1] == "ID742":
-                    if not any(existing.StartDateTime == consumptionvalues.StartDateTime for existing in inflowandoutflowlist.Inflows):
+                    if not any(existing.StartDateTime == consumptionvalues.StartDateTime for existing in
+                               inflowandoutflowlist.Inflows):
                         inflowandoutflowlist.Inflows.append(consumptionvalues)
                 else:
                     continue
