@@ -24,7 +24,7 @@ jobs:
     - name: Install system dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install unixodbc-dev --yes
+        sudo apt-get install build-essential unixodbc-dev libssl-dev libffi-dev python3-dev --yes
 
     - name: Install dependencies
       run: |
