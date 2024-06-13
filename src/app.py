@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from flask import Flask, render_template
 
 from src.parser import Parser
@@ -11,12 +13,15 @@ def hello_world():  # put application's code here
 
     counterstands = parser.parse_counterstands()
     try:
-       consumptionvalues = parser.parse_consumptionvalues()
+        consumptionvalues = parser.parse_consumptionvalues()
     except Exception as e:
         print(e)
-    print(consumptionvalues)
 
-
+    startdatetime = datetime(2019, 3, 20, 23, 0)
+    enddatetime = datetime(2019, 3, 26, 23, 30)
+    inflowObservationvalues = parser.getObservationsForASpecificDuraction(startdatetime, enddatetime, consumptionvalues.Inflows)
+    outflowsObservationvalues = parser.getObservationsForASpecificDuraction(startdatetime, enddatetime, consumptionvalues.Outflows)
+    counterstandOfInflowAtStart = parser.getCounterStand(startdatetime, counterstands, consumptionvalues.Inflows)
 
     return 'Hello World!'
 
