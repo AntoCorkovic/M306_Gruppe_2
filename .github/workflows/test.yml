@@ -22,7 +22,9 @@ jobs:
         python-version: '3.x'
 
     - name: Install system dependencies
-      run: sudo apt-get install unixodbc-dev --yes
+      run: |
+        sudo apt-get update
+        sudo apt-get install unixodbc-dev --yes
 
     - name: Install dependencies
       run: |
