@@ -25,7 +25,8 @@ def hello_world():  # put application's code here
                                                                          consumptionvalues.Inflows)
     outflows_observationvalues = parser.getObservationsForASpecificDuraction(startdatetime, enddatetime,
                                                                            consumptionvalues.Outflows)
-    counterstand_of_inflow_at_start = parser.getCounterStand(startdatetime, counterstands, consumptionvalues.Inflows)
+    counterstand_of_inflow_at_start = parser.getCounterStand(startdatetime, counterstands, consumptionvalues.Inflows, {"1-1:1.8.1", "1-1:1.8.2"})
+
 
 
 @app.route('/ui')
@@ -46,7 +47,8 @@ def chart():
                                                                       consumptionvalues.Inflows)
     outflow_observations = parser.getObservationsForASpecificDuraction(startdatetime, enddatetime,
                                                                        consumptionvalues.Outflows)
-    counterstand_of_inflow_at_start = parser.getCounterStand(startdatetime, counterstands, consumptionvalues.Inflows)
+    counterstand_of_inflow_at_start = parser.getCounterStand(startdatetime, counterstands, consumptionvalues.Inflows, {"1-1:1.8.1", "1-1:1.8.2"})
+    counterstand_of_outflow_at_start = parser.getCounterStand(startdatetime, counterstands, consumptionvalues.Outflows, {"1-1:2.8.1", "1-1:2.8.2"})
 
     # Extrahieren der Volumendaten und Zeitlabels
     inflow_data = [obs.Volume for obs in inflow_observations]
@@ -59,7 +61,8 @@ def chart():
         'inflowData': inflow_data,
         'outflowData': outflow_data,
         'timeLabels': time_labels,
-        'counterstandOfInflowAtStart': counterstand_of_inflow_at_start
+        'counterstandOfInflowAtStart': counterstand_of_inflow_at_start,
+        'counterstandOfOutflowAtStart': counterstand_of_outflow_at_start
     }
 
     # Daten direkt an das Template übergeben

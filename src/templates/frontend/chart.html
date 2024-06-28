@@ -78,6 +78,7 @@
         const outflowData = data.outflowData;
         const timeLabels = data.timeLabels;
         const counterstandOfInflowAtStart = data.counterstandOfInflowAtStart;
+        const counterstandOfOutflowAtStart = data.counterstandOfOutflowAtStart;
 
         // Berechne den kumulierten Zählerstand basierend auf den Inflow-Daten
         let cumulativeInflowData = [];
@@ -86,8 +87,14 @@
             cumulativeValue += volume;
             cumulativeInflowData.push(cumulativeValue);
         });
+        cumulativeValue = counterstandOfOutflowAtStart;
+        let cumulativeOutflowData = [];
+        outflowData.forEach(volume => {
+            cumulativeValue += volume;
+            cumulativeOutflowData.push(cumulativeValue);
+        });
 
-        console.log('Cumulative Inflow Data:', cumulativeInflowData);
+
 
         const inflowCtx = document.getElementById('inflowChart').getContext('2d');
         const outflowCtx = document.getElementById('outflowChart').getContext('2d');
@@ -105,7 +112,19 @@
                 pointRadius: 5,
                 pointHoverRadius: 10,
                 showLine: true
-            }]
+            },
+                {
+                    label: 'Outflow (Cumulative)',
+                    data: cumulativeOutflowData,
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    borderWidth: 1,
+                    fill: false,
+                    tension: 0.1,
+                    pointRadius: 5,
+                    pointHoverRadius: 10,
+                    showLine: true
+                }]
         };
 
         const outflowChartData = {
@@ -120,23 +139,40 @@
         };
 
         const inflowChart = new Chart(inflowCtx, {
-            type: 'line',
-            data: inflowChartData,
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    x: {
-                        type: 'category'
-                    },
-                    y: {
-                        beginAtZero: false,
+    type: 'line',
+    data: inflowChartData,
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+            x: {
+                type: 'category'
+            },
+            y: {
+                type: 'linear',
+                display: true,
+                position: 'left',
+                beginAtZero: false,
+                id: 'y-axis-1',
+            },
+            y1: {
+                type: 'linear',
+                display: true,
+                position: 'right',
+                beginAtZero: false,
+                id: 'y-axis-2',
+                grid: {
+                    drawOnChartArea: false, // Nur linke y-Achse soll das Raster zeichnen
+                },
+            },
+        }
+    }
+});
 
-                    }
-                }
-            }
-        });
-
+// Die y-Achsen den Datasets zuordnen
+inflowChartData.datasets.forEach((dataset, i) => {
+    dataset.yAxisID = i === 0 ? 'y-axis-1' : 'y-axis-2';
+});
         const outflowChart = new Chart(outflowCtx, {
             type: 'bar',
             data: outflowChartData,
