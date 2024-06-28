@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 
 from flask import Flask, render_template
 
-from src.parser import Parser
+# from src.parser import Parser
 
 app = Flask(__name__)
 
@@ -24,12 +24,10 @@ def hello_world():  # put application's code here
     outflowsObservationvalues = parser.getObservationsForASpecificDuraction(startdatetime, enddatetime, consumptionvalues.Outflows)
     counterstandOfInflowAtStart = parser.getCounterStand(startdatetime, counterstands, consumptionvalues.Inflows)
 
-    return 'Hello World!'
 
 
 @app.route('/ui')
-def ui():  # put application's code here
-
+def ui():
 
     return render_template('frontend/index.html')
 

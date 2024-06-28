@@ -1,11 +1,10 @@
 import os
-import xml.etree.ElementTree as ET
-from datetime import timedelta
-from typing import List, Any
-
-from src.models.consumptionvalues import Observation
+import xml.etree.ElementTree as elementTree
 from src.models.counterstands import *
 from src.models.consumptionvalues import *
+from datetime import timedelta
+from typing import List, Any
+from src.models.consumptionvalues import Observation
 
 
 
@@ -20,7 +19,7 @@ class Parser:
 
         for file in os.listdir(self.OUTFLOW_DIRECTORY):
             try:
-                tree = ET.parse(os.path.join(self.OUTFLOW_DIRECTORY, file))
+                tree = elementTree.parse(os.path.join(self.OUTFLOW_DIRECTORY, file))
                 root = tree.getroot()
 
                 # Parsing Header
@@ -49,7 +48,7 @@ class Parser:
 
                     counterstands_dict[created_date].timePeriods.append(time_period)
 
-            except ET.ParseError as e:
+            except elementTree.ParseError as e:
                 print(f"Error parsing {file}: {e}")
             except Exception as e:
                 print(f"Unexpected error with {file}: {e}")
@@ -63,7 +62,7 @@ class Parser:
         inflowandoutflowlist = InflowAndOutflow()
         for file in os.listdir(self.INFLOW_DIRECTORY):
             try:
-                tree = ET.parse(self.INFLOW_DIRECTORY + '/' + file)
+                tree = elementTree.parse(self.INFLOW_DIRECTORY + '/' + file)
                 root = tree.getroot()
                 ns = {'rsm': 'http://www.strom.ch'}
 
