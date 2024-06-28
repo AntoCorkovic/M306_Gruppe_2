@@ -2,6 +2,12 @@ import os
 import xml.etree.ElementTree as elementTree
 from src.models.counterstands import *
 from src.models.consumptionvalues import *
+from datetime import timedelta
+from typing import List, Any
+from src.models.consumptionvalues import Observation
+
+
+
 
 
 class Parser:
@@ -28,7 +34,7 @@ class Parser:
 
                 differenttimeperiods = []
                 for time_period_elem in root.findall('.//TimePeriod'):
-                    time_period = TimePeriod(end=time_period_elem.get('end'))
+                    time_period = TimePeriod(end = datetime.strptime(time_period_elem.get('end'), "%Y-%m-%dT%H:%M:%S"))
 
                     # Parsing ValueRows
                     for value_row_elem in time_period_elem.findall('ValueRow'):
@@ -102,3 +108,50 @@ class Parser:
         inflowandoutflowlist.Inflows.sort(key=lambda x: x.StartDateTime)
         inflowandoutflowlist.Outflows.sort(key=lambda x: x.StartDateTime)
         return inflowandoutflowlist
+
+    def get_nearest_older_observation(self, inflows, start):
+        older_observations = [obs for obs in inflows if obs.StartDateTime <= start]
+
+        if not older_observations:
+            return None
+
+        nearest_observation = min(older_observations, key=lambda obs: start - obs.StartDateTime)
+        return nearest_observation
+
+    def find_closest_time_period(self, counterstands: List[Counterstands], end_date: datetime) -> Optional[dict]:
+        required_obis = {"1-1:1.8.1", "1-1:1.8.2"}
+        closest_time_period = None
+        closest_time_diff = timedelta.max
+
+        for counterstand in counterstands:
+            for time_period in counterstand.timePeriods:
+                obis_set = {row.obis for row in time_period.valueRows}
+                if required_obis.issubset(obis_set):
+                    time_diff = end_date - time_period.end
+                    if time_diff >= timedelta(0) and time_diff < closest_time_diff:
+                        closest_time_diff = time_diff
+                        closest_time_period = time_period
+
+        if closest_time_period:
+            filtered_value_rows = [row for row in closest_time_period.valueRows if row.obis in required_obis]
+            total_value = sum(row.value for row in filtered_value_rows)
+            return {
+                "end": closest_time_period.end,
+                "total_value": total_value
+            }
+
+        return None
+
+    def getObservationsForASpecificDuraction(self, start: datetime, end: datetime, flows: []) -> list[Observation]:
+        nearest_consumption = self.get_nearest_older_observation(flows, start)
+        countofvolums = int((end - start).total_seconds() / 60 / 15)
+        volumnstoskip = int((start - nearest_consumption.StartDateTime).seconds / 60 / 15)
+        if len(nearest_consumption.Observations) - volumnstoskip >= countofvolums:
+            return nearest_consumption.Observations[volumnstoskip:(volumnstoskip + countofvolums)]
+        else:
+            return nearest_consumption.Observations[volumnstoskip:len(nearest_consumption.Observations)] + self.getObservationsForASpecificDuraction(nearest_consumption.EndDateTime, end, flows)
+
+    def getCounterStand(self, start: datetime, counterstands: List[Counterstands], flows: []) -> float:
+        timeperiod = self.find_closest_time_period(counterstands, start)
+        observationbetweenlastcounterstandandstartdate = self.getObservationsForASpecificDuraction(timeperiod["end"], start, flows)
+        return timeperiod["total_value"] - sum(obs.Volume for obs in observationbetweenlastcounterstandandstartdate)

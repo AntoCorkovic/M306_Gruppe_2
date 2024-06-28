@@ -13,7 +13,7 @@ class ValueRow:
 
 @dataclass
 class TimePeriod:
-    end: str
+    end: datetime = field(default_factory=datetime.now)
     valueRows: List[ValueRow] = field(default_factory=list)
 
 
