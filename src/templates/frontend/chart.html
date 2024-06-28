@@ -5,49 +5,11 @@
     <title>Energy Consumption and Inflow</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background: #f9fafb;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            margin: 0;
-        }
-        .container {
-            width: 90%;
-            max-width: 1200px;
-            margin: 20px;
-            padding: 20px;
-            background: white;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
-        }
-        .swiper-container {
-            width: 100%;
-            height: 500px; /* Set a fixed height to prevent stretching */
-        }
-        .swiper-slide {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            width: 100%;
-        }
-        .chart-container {
-            width: 100%;
-            height: 100%;
-            padding: 20px;
-        }
-        canvas {
-            width: 100% !important;
-            height: auto !important;
-        }
-    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='stylesheet/chart.css') }}">
 </head>
 <body>
-    <div class="container">
+    <div id="loader"></div>
+    <div class="container hidden" id="content">
         <h1 class="text-2xl font-bold mb-4">Energy Consumption and Inflow</h1>
         <div class="swiper-container">
             <div class="swiper-wrapper">
@@ -67,107 +29,8 @@
             <div class="swiper-button-next"></div>
         </div>
     </div>
-
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
-    <script>
-        // Daten vom Server in das Template eingebettet
-        const data = JSON.parse('{{ data | safe }}');
-
-        const inflowData = data.inflowData;
-        const outflowData = data.outflowData;
-        const timeLabels = data.timeLabels;
-        const counterstandOfInflowAtStart = data.counterstandOfInflowAtStart;
-
-        // Berechne den kumulierten Zählerstand basierend auf den Inflow-Daten
-        let cumulativeInflowData = [];
-        let cumulativeValue = counterstandOfInflowAtStart;
-        inflowData.forEach(volume => {
-            cumulativeValue += volume;
-            cumulativeInflowData.push(cumulativeValue);
-        });
-
-        console.log('Cumulative Inflow Data:', cumulativeInflowData);
-
-        const inflowCtx = document.getElementById('inflowChart').getContext('2d');
-        const outflowCtx = document.getElementById('outflowChart').getContext('2d');
-
-        const inflowChartData = {
-            labels: timeLabels,
-            datasets: [{
-                label: 'Inflow (Cumulative)',
-                data: cumulativeInflowData,
-                backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                borderColor: 'rgba(75, 192, 192, 1)',
-                borderWidth: 1,
-                fill: false,
-                tension: 0.1,
-                pointRadius: 5,
-                pointHoverRadius: 10,
-                showLine: true
-            }]
-        };
-
-        const outflowChartData = {
-            labels: timeLabels,
-            datasets: [{
-                label: 'Outflow',
-                data: outflowData,
-                backgroundColor: 'rgba(153, 102, 255, 0.2)',
-                borderColor: 'rgba(153, 102, 255, 1)',
-                borderWidth: 1
-            }]
-        };
-
-        const inflowChart = new Chart(inflowCtx, {
-            type: 'line',
-            data: inflowChartData,
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    x: {
-                        type: 'category'
-                    },
-                    y: {
-                        beginAtZero: false,
-
-                    }
-                }
-            }
-        });
-
-        const outflowChart = new Chart(outflowCtx, {
-            type: 'bar',
-            data: outflowChartData,
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    x: {
-                        type: 'category'
-                    },
-                    y: {
-                        beginAtZero: true,
-
-                    }
-                }
-            }
-        });
-
-        // Swiper initialisieren
-        const swiper = new Swiper('.swiper-container', {
-            navigation: {
-                nextEl: '.swiper-button-next',
-                prevEl: '.swiper-button-prev',
-            },
-            pagination: {
-                el: '.swiper-pagination',
-                clickable: true,
-            },
-            slidesPerView: 1,
-            spaceBetween: 0,
-        });
-    </script>
+    <script src="{{ url_for('static', filename='script/chart.js') }}"></script>
 </body>
 </html>
