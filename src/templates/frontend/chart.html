@@ -1,36 +1,45 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
     <meta charset="UTF-8">
-    <title>Energy Consumption and Inflow</title>
+    <title>Bezug und Einspeisung</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='stylesheet/chart.css') }}">
 </head>
 <body>
     <div id="loader"></div>
-    <div class="container hidden" id="content">
-        <h1 class="text-2xl font-bold mb-4">Energy Consumption and Inflow</h1>
-        <div class="swiper-container">
-            <div class="swiper-wrapper">
-                <div class="swiper-slide">
-                    <div class="chart-container">
-                        <canvas id="inflowChart"></canvas>
-                    </div>
-                </div>
-                <div class="swiper-slide">
-                    <div class="chart-container">
-                        <canvas id="outflowChart"></canvas>
-                    </div>
+    <div class="header" id="header">
+        <span>Bezug und Einspeisung</span>
+        <button id="datePickerButton" class="date-picker-button">Zeitraum auswählen</button>
+    </div>
+    <div class="content hidden" id="content">
+        <div class="main-wrapper">
+            <div class="main-content">
+                <div class="chart-container">
+                    <canvas id="combinedChart"></canvas>
                 </div>
             </div>
-            <div class="swiper-pagination"></div>
-            <div class="swiper-button-prev"></div>
-            <div class="swiper-button-next"></div>
+            <div class="info-boxes">
+                <div class="info-box">Totaler Bezug in diesem Zeitraum</div>
+                <div class="info-box">Totale Einspeisung in diesem Zeitraum</div>
+                <div class="info-box">Durschnittliches Wachstum im vergleich zu all time</div>
+            </div>
         </div>
     </div>
+
+    <!-- Pop-up Modal für den Datepicker -->
+    <div id="datePickerModal" class="modal hidden">
+        <div class="modal-content">
+            <span id="closeModal" class="close-button">&times;</span>
+            <input id="datePicker" class="date-picker-input" type="text" placeholder="Wählen Sie einen Zeitraum" />
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="{{ url_for('static', filename='script/chart.js') }}"></script>
 </body>
 </html>
