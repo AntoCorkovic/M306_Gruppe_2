@@ -7,7 +7,14 @@ from typing import List, Any
 from src.models.consumptionvalues import Observation
 
 
+def get_nearest_older_observation(inflows, start):
+    older_observations = [obs for obs in inflows if obs.StartDateTime <= start]
 
+    if not older_observations:
+        return None
+
+    nearest_observation = min(older_observations, key=lambda obs: start - obs.StartDateTime)
+    return nearest_observation
 
 
 class Parser:
@@ -34,7 +41,7 @@ class Parser:
 
                 differenttimeperiods = []
                 for time_period_elem in root.findall('.//TimePeriod'):
-                    time_period = TimePeriod(end = datetime.strptime(time_period_elem.get('end'), "%Y-%m-%dT%H:%M:%S"))
+                    time_period = TimePeriod(end=datetime.strptime(time_period_elem.get('end'), "%Y-%m-%dT%H:%M:%S"))
 
                     # Parsing ValueRows
                     for value_row_elem in time_period_elem.findall('ValueRow'):
@@ -109,15 +116,6 @@ class Parser:
         inflowandoutflowlist.Outflows.sort(key=lambda x: x.StartDateTime)
         return inflowandoutflowlist
 
-    def get_nearest_older_observation(self, inflows, start):
-        older_observations = [obs for obs in inflows if obs.StartDateTime <= start]
-
-        if not older_observations:
-            return None
-
-        nearest_observation = min(older_observations, key=lambda obs: start - obs.StartDateTime)
-        return nearest_observation
-
     def find_closest_time_period(self, counterstands: List[Counterstands], end_date: datetime) -> Optional[dict]:
         required_obis = {"1-1:1.8.1", "1-1:1.8.2"}
         closest_time_period = None
@@ -142,16 +140,26 @@ class Parser:
 
         return None
 
-    def getObservationsForASpecificDuraction(self, start: datetime, end: datetime, flows: []) -> list[Observation]:
-        nearest_consumption = self.get_nearest_older_observation(flows, start)
+    def get_observations_for_specific_duration(self, start: datetime, end: datetime, flows: []) -> list[Observation]:
+        nearest_consumption = get_nearest_older_observation(flows, start)
         countofvolums = int((end - start).total_seconds() / 60 / 15)
         volumnstoskip = int((start - nearest_consumption.StartDateTime).seconds / 60 / 15)
         if len(nearest_consumption.Observations) - volumnstoskip >= countofvolums:
             return nearest_consumption.Observations[volumnstoskip:(volumnstoskip + countofvolums)]
         else:
-            return nearest_consumption.Observations[volumnstoskip:len(nearest_consumption.Observations)] + self.getObservationsForASpecificDuraction(nearest_consumption.EndDateTime, end, flows)
+            return nearest_consumption.Observations[
+                   volumnstoskip:len(nearest_consumption.Observations)] + self.get_observations_for_specific_duration(
+                nearest_consumption.EndDateTime, end, flows)
 
-    def getCounterStand(self, start: datetime, counterstands: List[Counterstands], flows: []) -> float:
+    def get_counterstand(self, start: datetime, counterstands: List[Counterstands], flows: []) -> float:
         timeperiod = self.find_closest_time_period(counterstands, start)
-        observationbetweenlastcounterstandandstartdate = self.getObservationsForASpecificDuraction(timeperiod["end"], start, flows)
+        observationbetweenlastcounterstandandstartdate = self.get_observations_for_specific_duration(timeperiod["end"],
+                                                                                                     start, flows)
         return timeperiod["total_value"] - sum(obs.Volume for obs in observationbetweenlastcounterstandandstartdate)
+
+    def get_all_time_total(self, inflow_list: List[Consumptionvalues]) -> float:
+        total_volume = 0.0
+        for consumption in inflow_list:
+            for observation in consumption.Observations:
+                total_volume += observation.Volume
+        return total_volume

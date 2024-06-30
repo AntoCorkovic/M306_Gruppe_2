@@ -1,6 +1,7 @@
 document.addEventListener("DOMContentLoaded", function() {
     const loader = document.getElementById("loader");
     const content = document.getElementById("content");
+    const header = document.getElementById("header");
     const combinedCtx = document.getElementById('combinedChart').getContext('2d');
 
     loader.style.display = "block";
@@ -43,6 +44,7 @@ document.addEventListener("DOMContentLoaded", function() {
             console.log(data); // Debugging the loaded data
             loader.style.display = "none";
             content.classList.remove("hidden");
+            header.classList.remove("hidden");
 
             const inflowData = data.inflowData;
             const outflowData = data.outflowData;
@@ -66,6 +68,11 @@ document.addEventListener("DOMContentLoaded", function() {
 
             const inflowLimits = calculateAxisLimits(cumulativeInflowData);
             const outflowLimits = calculateAxisLimits(cumulativeOutflowData);
+
+            // Update info boxes
+            document.querySelector('.info-box:nth-child(1)').innerText = `Totaler Bezug: ${data.totalOutflow.toFixed(1)}`;
+            document.querySelector('.info-box:nth-child(2)').innerText = `Totale Einspeisung: ${data.totalInflow.toFixed(1)}`;
+            document.querySelector('.info-box:nth-child(3)').innerText = `Durchschnittliches Wachstum: ${data.averageGrowth.toFixed(2)}%`;
 
             const combinedChartData = {
                 labels: timeLabels,
