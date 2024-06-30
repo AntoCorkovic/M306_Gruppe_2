@@ -3,16 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <title>Bezug und Einspeisung</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='stylesheet/chart.css') }}">
 </head>
 <body>
     <div id="loader"></div>
     <div class="header" id="header">
         <span>Bezug und Einspeisung</span>
-        <button id="datePickerButton" class="date-picker-button">Zeitraum auswählen</button>
+        <div class="header-buttons">
+            <div class="daterange-container">
+                <input type="text" name="daterange" id="daterange" value="01/01/2018 - 01/15/2018" class="daterange-input"/>
+                <span class="daterange-icon">&#x1F4C5;</span> <!-- Kalender Icon -->
+            </div>
+            <div class="dropdown">
+                <button id="downloadButton" class="header-button">Download <span class="dropdown-icon"><i class="fas fa-chevron-down"></i></span></button>
+                <div class="dropdown-content">
+                    <a href="#" id="downloadCSV">CSV <span class="download-icon"><i class="fas fa-download"></i></span></a>
+                    <a href="#" id="downloadJSON">JSON <span class="download-icon"><i class="fas fa-download"></i></span></a>
+                </div>
+            </div>
+        </div>
     </div>
     <div class="content hidden" id="content">
         <div class="main-wrapper">
@@ -27,19 +40,42 @@
                 <div class="info-box">Durschnittliches Wachstum im vergleich zu all time</div>
             </div>
         </div>
-    </div>
-
-    <!-- Pop-up Modal für den Datepicker -->
-    <div id="datePickerModal" class="modal hidden">
-        <div class="modal-content">
-            <span id="closeModal" class="close-button">&times;</span>
-            <input id="datePicker" class="date-picker-input" type="text" placeholder="Wählen Sie einen Zeitraum" />
+        <div class="bar-chart-wrapper">
+            <div class="bar-chart-container">
+                <canvas id="barChart"></canvas>
+            </div>
+        </div>
+        <div class="bottom-section">
+            <div class="left-boxes">
+                <div class="left-box">Box 1</div>
+                <div class="left-box">Box 2</div>
+            </div>
+            <div class="file-table-wrapper">
+                <table class="file-table">
+                    <thead>
+                        <tr>
+                            <th>Filename</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="fileTableBody">
+                        <!-- Fake data will be inserted here by JavaScript -->
+                    </tbody>
+                </table>
+                <div class="pagination">
+                    <button class="page-btn" id="prevPage">Previous</button>
+                    <span id="pageIndicator"></span>
+                    <button class="page-btn" id="nextPage">Next</button>
+                </div>
+            </div>
         </div>
     </div>
-
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/moment/min/moment.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
     <script src="{{ url_for('static', filename='script/chart.js') }}"></script>
 </body>
 </html>

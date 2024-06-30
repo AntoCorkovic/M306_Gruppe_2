@@ -14,12 +14,20 @@ body {
     width: calc(100% - 40px); /* Sicherstellen, dass volle Breite verwendet wird */
     padding: 20px;
     box-sizing: border-box; /* Padding in Breitenberechnung einbeziehen */
+    overflow: auto; /* Ermöglicht Scrollen */
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+
+.content::-webkit-scrollbar {
+    display: none;  /* Chrome, Safari and Opera */
 }
 
 .main-wrapper {
     display: flex;
     width: 100%;
     box-sizing: border-box; /* Padding in Breitenberechnung einbeziehen */
+    padding-bottom: 20px; /* Abstand zwischen Hauptabteilen */
 }
 
 .main-content {
@@ -33,6 +41,22 @@ body {
 
 .chart-container {
     height: 500px; /* Höhe fixieren, um Strecken zu verhindern */
+    position: relative;
+}
+
+.bar-chart-wrapper {
+    width: 100%;
+    background: white;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    padding: 20px;
+    box-sizing: border-box; /* Padding in Breitenberechnung einbeziehen */
+    margin-top: 0; /* Kein Abstand nach oben */
+    margin-bottom: 20px; /* Abstand nach unten hinzufügen */
+}
+
+.bar-chart-container {
+    height: 300px; /* Höhe fixieren */
     position: relative;
 }
 
@@ -101,9 +125,17 @@ canvas {
     font-weight: bold;
     box-sizing: border-box; /* Padding in Breitenberechnung einbeziehen */
     position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
-.date-picker-button {
+.header-buttons {
+    display: flex;
+    align-items: center;
+}
+
+.header-button {
     background-color: #007bff;
     color: white;
     border: none;
@@ -111,53 +143,238 @@ canvas {
     border-radius: 5px;
     cursor: pointer;
     font-size: 16px;
-    position: absolute;
-    top: 10px;
-    right: 20px;
+    margin-left: 0; /* Entferne Margin links, um Breite korrekt zu berechnen */
+    display: flex;
+    align-items: center;
+    position: relative; /* Ensures dropdown-content aligns with button */
 }
 
-.modal {
-    display: none; /* Hidden by default */
-    position: fixed; /* Stay in place */
-    z-index: 1; /* Sit on top */
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto; /* Enable scroll if needed */
-    background-color: rgb(0,0,0); /* Fallback color */
-    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+.header-button + .header-button {
+    margin-left: 10px; /* Stelle sicher, dass nur aufeinanderfolgende Buttons Abstand haben */
 }
 
-.modal-content {
-    background-color: #fefefe;
-    margin: 15% auto; /* 15% from the top and centered */
-    padding: 20px;
-    border: 1px solid #888;
-    width: 80%; /* Could be more or less, depending on screen size */
-    max-width: 500px;
+.header-button:hover {
+    background-color: #0056b3;
+}
+
+.daterange-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.daterange-input {
+    border: 1px solid #ccc;
     border-radius: 10px;
+    padding: 12px 15px;
+    font-size: 16px;
+    margin-right: 10px;
+    width: 250px;
+    box-sizing: border-box;
 }
 
-.close-button {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
+.daterange-input:focus {
+    outline: none;
+    border-color: #007bff;
 }
 
-.close-button:hover,
-.close-button:focus {
-    color: black;
-    text-decoration: none;
+.daterange-icon {
+    position: absolute;
+    right: 20px;
+    pointer-events: none;
+    font-size: 20px;
+    color: #007bff;
+}
+
+.daterangepicker .applyBtn,
+.daterangepicker .cancelBtn {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+    font-size: 14px;
     cursor: pointer;
 }
 
-.date-picker-input {
-    width: 100%;
-    padding: 10px;
-    font-size: 16px;
+.daterangepicker .applyBtn:hover,
+.daterangepicker .cancelBtn:hover {
+    background-color: #0056b3;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    width: 100%; /* Gleiche Breite wie der Dropdown-Button */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    z-index: 1;
     border-radius: 5px;
-    border: 1px solid #ccc;
+    overflow: hidden;
+    left: 0; /* Sicherstellen, dass das Dropdown genau unter dem Button ist */
+}
+
+.dropdown-content a {
+    color: black;
+    padding: 10px 15px;
+    text-decoration: none;
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+}
+
+.dropdown-content a:hover {
+    background-color: #f1f1f1;
+}
+
+.dropdown-icon {
+    margin-left: 5px;
+    font-size: 10px; /* Kleinerer Pfeil */
+}
+
+.download-icon {
+    margin-left: 10px;
+    font-size: 16px; /* Anpassung der Größe des Icons */
+}
+
+.show {
+    display: block;
+}
+
+/* New styles for bottom section */
+.bottom-section {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-top: 0; /* Kein Abstand nach oben */
+}
+
+.left-boxes {
+    display: flex;
+    flex-direction: column;
+    width: 30%; /* Anpassung der Breite der Boxen */
+    justify-content: space-between; /* Boxen gleichmäßig verteilen */
+    margin-right: 20px; /* Abstand zwischen left-boxes und file-table-wrapper */
+}
+
+.left-box {
+    background: white;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: calc(50% - 10px); /* Höhe der Boxen anpassen, um Abstand zu gewährleisten */
+}
+
+.left-box:not(:last-child) {
+    margin-bottom: 20px; /* Abstand zwischen den Boxen */
+}
+
+.file-table-wrapper {
+    flex-grow: 1; /* Tabelle nimmt die restliche verfügbare Breite ein */
+    background: white;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    padding: 20px;
     box-sizing: border-box;
+}
+
+.file-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.file-table th,
+.file-table td {
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    text-align: left;
+    height: 40px; /* Gleiche Höhe für alle Zellen */
+}
+
+.file-table th {
+    background-color: #007bff;
+    color: white;
+    font-weight: bold;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+.file-table td {
+    background-color: #fff;
+}
+
+.file-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.file-table tr:hover {
+    background-color: #f1f1f1;
+    cursor: pointer;
+}
+
+.file-status {
+    display: flex;
+    align-items: center;
+    height: 100%; /* Gleiche Höhe wie die anderen Felder */
+}
+
+.file-status i {
+    margin-right: 8px;
+}
+
+/* Reusing the style of header-button for download-button */
+.download-button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+}
+
+.download-button:hover {
+    background-color: #0056b3;
+}
+
+.download-icon {
+    margin-left: 5px;
+    font-size: 16px;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.page-btn {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    margin: 0 10px;
+}
+
+.page-btn:hover {
+    background-color: #0056b3;
+}
+
+#pageIndicator {
+    font-size: 16px;
 }

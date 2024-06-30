@@ -2,8 +2,67 @@ document.addEventListener("DOMContentLoaded", function() {
     const loader = document.getElementById("loader");
     const content = document.getElementById("content");
     const combinedCtx = document.getElementById('combinedChart').getContext('2d');
+    const barCtx = document.getElementById('barChart').getContext('2d');
+    const downloadButton = document.getElementById('downloadButton');
+    const downloadCSV = document.getElementById('downloadCSV');
+    const downloadJSON = document.getElementById('downloadJSON');
+    const daterange = document.getElementById('daterange');
+    const dropdownContent = document.querySelector('.dropdown-content');
+
+    const prevPageBtn = document.getElementById('prevPage');
+    const nextPageBtn = document.getElementById('nextPage');
+    const pageIndicator = document.getElementById('pageIndicator');
+
+    let currentPage = 1;
+    const rowsPerPage = 10;
 
     loader.style.display = "block";
+
+    $(function() {
+        $('input[name="daterange"]').daterangepicker({
+            opens: 'left'
+        }, function(start, end, label) {
+            console.log("A new date selection was made: " + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
+        });
+    });
+
+    downloadButton.addEventListener('click', function() {
+        dropdownContent.classList.toggle('show');
+    });
+
+    function downloadData(format) {
+        const data = JSON.parse(localStorage.getItem('chartData'));
+        let content;
+        if (format === 'csv') {
+            content = convertToCSV(data);
+        } else if (format === 'json') {
+            content = JSON.stringify(data, null, 2);
+        }
+        const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `chart_data.${format}`;
+        a.click();
+        URL.revokeObjectURL(url);
+    }
+
+    function convertToCSV(objArray) {
+        const array = typeof objArray !== 'object' ? JSON.parse(objArray) : objArray;
+        let str = '';
+        for (let i = 0; i < array.length; i++) {
+            let line = '';
+            for (let index in array[i]) {
+                if (line !== '') line += ',';
+                line += array[i][index];
+            }
+            str += line + '\r\n';
+        }
+        return str;
+    }
+
+    downloadCSV.addEventListener('click', () => downloadData('csv'));
+    downloadJSON.addEventListener('click', () => downloadData('json'));
 
     const fetchData = () => {
         return fetch('/chart/data')
@@ -210,44 +269,155 @@ document.addEventListener("DOMContentLoaded", function() {
 
             updateAxes(combinedChart, inflowLimits, outflowLimits);
             combinedChart.update();
+
+            // Adding the bar chart initialization
+            const numberOfBars = 6;
+            const inflowBarData = [];
+            const outflowBarData = [];
+            const barLabels = [];
+            const inflowInterval = Math.floor(inflowData.length / numberOfBars);
+            const outflowInterval = Math.floor(outflowData.length / numberOfBars);
+
+            for (let i = 0; i < numberOfBars; i++) {
+                const inflowSlice = inflowData.slice(i * inflowInterval, (i + 1) * inflowInterval);
+                const outflowSlice = outflowData.slice(i * outflowInterval, (i + 1) * outflowInterval);
+                inflowBarData.push(inflowSlice.reduce((a, b) => a + b, 0));
+                outflowBarData.push(outflowSlice.reduce((a, b) => a + b, 0));
+                const startTime = moment(timeLabels[i * inflowInterval]);
+                const endTime = moment(timeLabels[Math.min((i + 1) * inflowInterval, timeLabels.length - 1)]);
+                barLabels.push(`${startTime.format('HH:mm')} - ${endTime.format('HH:mm')}`);
+            }
+
+            if (inflowData.length % numberOfBars !== 0) {
+                inflowBarData.push(inflowData.slice(numberOfBars * inflowInterval).reduce((a, b) => a + b, 0));
+                outflowBarData.push(outflowData.slice(numberOfBars * outflowInterval).reduce((a, b) => a + b, 0));
+                const startTime = moment(timeLabels[numberOfBars * inflowInterval]);
+                const endTime = moment(timeLabels[timeLabels.length - 1]);
+                barLabels.push(`${startTime.format('HH:mm')} - ${endTime.format('HH:mm')}`);
+            }
+
+            const barChartData = {
+                labels: barLabels,
+                datasets: [
+                    {
+                        label: 'Einspeisung',
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1,
+                        data: inflowBarData
+                    },
+                    {
+                        label: 'Bezug',
+                        backgroundColor: 'rgba(153, 102, 255, 0.2)',
+                        borderColor: 'rgba(153, 102, 255, 1)',
+                        borderWidth: 1,
+                        data: outflowBarData
+                    }
+                ]
+            };
+
+            const barChart = new Chart(barCtx, {
+                type: 'bar',
+                data: barChartData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            beginAtZero: true
+                        },
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+            // Fake data for files
+            const fileTableBody = document.getElementById('fileTableBody');
+            const fakeFiles = [
+                { filename: 'file1.txt', status: 'Bezug' },
+                { filename: 'file2.txt', status: 'Einspeisung' },
+                { filename: 'file3.txt', status: 'Bezug' },
+                { filename: 'file4.txt', status: 'Einspeisung' },
+                { filename: 'file5.txt', status: 'Bezug' },
+                { filename: 'file6.txt', status: 'Einspeisung' },
+                { filename: 'file7.txt', status: 'Bezug' },
+                { filename: 'file8.txt', status: 'Einspeisung' },
+                { filename: 'file9.txt', status: 'Bezug' },
+                { filename: 'file10.txt', status: 'Einspeisung' },
+                { filename: 'file11.txt', status: 'Bezug' },
+                { filename: 'file12.txt', status: 'Einspeisung' },
+                { filename: 'file13.txt', status: 'Bezug' },
+                { filename: 'file14.txt', status: 'Einspeisung' },
+                { filename: 'file15.txt', status: 'Bezug' },
+                { filename: 'file16.txt', status: 'Einspeisung' },
+                { filename: 'file17.txt', status: 'Bezug' },
+                { filename: 'file18.txt', status: 'Einspeisung' },
+                { filename: 'file19.txt', status: 'Bezug' },
+                { filename: 'file20.txt', status: 'Einspeisung' }
+            ];
+
+            const renderTable = (page = 1) => {
+                const start = (page - 1) * rowsPerPage;
+                const end = start + rowsPerPage;
+                const filesToDisplay = fakeFiles.slice(start, end);
+
+                fileTableBody.innerHTML = '';
+                filesToDisplay.forEach(file => {
+                    const row = document.createElement('tr');
+                    const filenameCell = document.createElement('td');
+                    const statusCell = document.createElement('td');
+                    const actionCell = document.createElement('td');
+                    const downloadButton = document.createElement('button');
+                    const icon = document.createElement('i');
+                    const statusIcon = document.createElement('i');
+
+                    filenameCell.textContent = file.filename;
+
+                    statusIcon.className = 'fas fa-bolt';
+                    statusIcon.style.color = file.status === 'Bezug' ? 'rgba(153, 102, 255, 1)' : 'rgba(75, 192, 192, 1)';
+
+                    statusCell.className = 'file-status';
+                    statusCell.appendChild(statusIcon);
+                    statusCell.appendChild(document.createTextNode(file.status));
+
+                    downloadButton.className = 'download-button';
+                    downloadButton.textContent = 'Download';
+                    icon.className = 'fas fa-download download-icon';
+                    downloadButton.appendChild(icon);
+                    actionCell.appendChild(downloadButton);
+
+                    row.appendChild(filenameCell);
+                    row.appendChild(statusCell);
+                    row.appendChild(actionCell);
+
+                    fileTableBody.appendChild(row);
+                });
+
+                pageIndicator.textContent = `Page ${page} of ${Math.ceil(fakeFiles.length / rowsPerPage)}`;
+                prevPageBtn.disabled = page === 1;
+                nextPageBtn.disabled = page === Math.ceil(fakeFiles.length / rowsPerPage);
+            };
+
+            renderTable(currentPage);
+
+            prevPageBtn.addEventListener('click', () => {
+                if (currentPage > 1) {
+                    currentPage--;
+                    renderTable(currentPage);
+                }
+            });
+
+            nextPageBtn.addEventListener('click', () => {
+                if (currentPage < Math.ceil(fakeFiles.length / rowsPerPage)) {
+                    currentPage++;
+                    renderTable(currentPage);
+                }
+            });
         })
         .catch(error => {
             loader.style.display = "none";
             console.error('Error fetching data:', error);
         });
-});
-
-// Datepicker Modal
-document.addEventListener("DOMContentLoaded", function() {
-    const datePickerButton = document.getElementById('datePickerButton');
-    const datePickerModal = document.getElementById('datePickerModal');
-    const closeModal = document.getElementById('closeModal');
-    const datePickerElement = document.getElementById('datePicker');
-
-    datePickerButton.addEventListener('click', function() {
-        datePickerModal.style.display = 'block';
-    });
-
-    closeModal.addEventListener('click', function() {
-        datePickerModal.style.display = 'none';
-    });
-
-    window.addEventListener('click', function(event) {
-        if (event.target === datePickerModal) {
-            datePickerModal.style.display = 'none';
-        }
-    });
-
-    // Initialize the date picker
-    flatpickr(datePickerElement, {
-        mode: "range",
-        dateFormat: "Y-m-d",
-        onChange: function(selectedDates) {
-            if (selectedDates.length === 2) {
-                // Handle the date range selection
-                console.log("Selected range: ", selectedDates);
-                // Add your logic to update the chart data based on selected date range
-            }
-        }
-    });
 });
