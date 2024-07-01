@@ -130,7 +130,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 labels: timeLabels,
                 datasets: [
                     {
-                        label: 'Einspeisung (Kumuliert)',
+                        label: 'Bezug (kWh)',
                         data: cumulativeInflowData,
                         backgroundColor: 'rgba(75, 192, 192, 0.2)',
                         borderColor: 'rgba(75, 192, 192, 1)',
@@ -142,7 +142,7 @@ document.addEventListener("DOMContentLoaded", function() {
                         yAxisID: 'y'
                     },
                     {
-                        label: 'Bezug (Kumuliert)',
+                        label: 'Einspeisung (kWh)',
                         data: cumulativeOutflowData,
                         backgroundColor: 'rgba(153, 102, 255, 0.2)',
                         borderColor: 'rgba(153, 102, 255, 1)',
@@ -191,7 +191,7 @@ document.addEventListener("DOMContentLoaded", function() {
                             position: 'left',
                             title: {
                                 display: true,
-                                text: 'Einspeisung (Kumuliert)'
+                                text: 'Bezug (kWh)'
                             }
                         },
                         y1: {
@@ -199,7 +199,7 @@ document.addEventListener("DOMContentLoaded", function() {
                             position: 'right',
                             title: {
                                 display: true,
-                                text: 'Bezug (Kumuliert)'
+                                text: 'Einspeisung (kWh)'
                             },
                             grid: {
                                 drawOnChartArea: false
@@ -300,14 +300,14 @@ document.addEventListener("DOMContentLoaded", function() {
                 labels: barLabels,
                 datasets: [
                     {
-                        label: 'Einspeisung',
+                        label: 'Bezug (kWh)',
                         backgroundColor: 'rgba(75, 192, 192, 0.2)',
                         borderColor: 'rgba(75, 192, 192, 1)',
                         borderWidth: 1,
                         data: inflowBarData
                     },
                     {
-                        label: 'Bezug',
+                        label: 'Einspeisung (kWh)',
                         backgroundColor: 'rgba(153, 102, 255, 0.2)',
                         borderColor: 'rgba(153, 102, 255, 1)',
                         borderWidth: 1,

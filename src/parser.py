@@ -118,22 +118,21 @@ class Parser:
         nearest_observation = min(older_observations, key=lambda obs: start - obs.StartDateTime)
         return nearest_observation
 
-    def find_closest_time_period(self, counterstands: List[Counterstands], end_date: datetime) -> Optional[dict]:
-        required_obis = {"1-1:1.8.1", "1-1:1.8.2"}
+    def find_closest_time_period(self, counterstands: List[Counterstands], end_date: datetime, obis) -> Optional[dict]:
         closest_time_period = None
         closest_time_diff = timedelta.max
 
         for counterstand in counterstands:
             for time_period in counterstand.timePeriods:
                 obis_set = {row.obis for row in time_period.valueRows}
-                if required_obis.issubset(obis_set):
+                if obis.issubset(obis_set):
                     time_diff = end_date - time_period.end
                     if time_diff >= timedelta(0) and time_diff < closest_time_diff:
                         closest_time_diff = time_diff
                         closest_time_period = time_period
 
         if closest_time_period:
-            filtered_value_rows = [row for row in closest_time_period.valueRows if row.obis in required_obis]
+            filtered_value_rows = [row for row in closest_time_period.valueRows if row.obis in obis]
             total_value = sum(row.value for row in filtered_value_rows)
             return {
                 "end": closest_time_period.end,
@@ -151,7 +150,8 @@ class Parser:
         else:
             return nearest_consumption.Observations[volumnstoskip:len(nearest_consumption.Observations)] + self.getObservationsForASpecificDuraction(nearest_consumption.EndDateTime, end, flows)
 
-    def getCounterStand(self, start: datetime, counterstands: List[Counterstands], flows: []) -> float:
-        timeperiod = self.find_closest_time_period(counterstands, start)
-        observationbetweenlastcounterstandandstartdate = self.getObservationsForASpecificDuraction(timeperiod["end"], start, flows)
+    def getCounterStand(self, start: datetime, counterstands: List[Counterstands], flows: [], obis) -> float:
+        timeperiod = self.find_closest_time_period(counterstands, start, obis)
+        observationbetweenlastcounterstandandstartdate = self.getObservationsForASpecificDuraction(timeperiod["end"],
+                                                                                                   start, flows)
         return timeperiod["total_value"] - sum(obs.Volume for obs in observationbetweenlastcounterstandandstartdate)

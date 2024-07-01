@@ -37,7 +37,10 @@ def chart_data():
                                                                       consumptionvalues.Inflows)
     outflow_observations = parser.getObservationsForASpecificDuraction(startdatetime, enddatetime,
                                                                        consumptionvalues.Outflows)
-    counterstand_of_inflow_at_start = parser.getCounterStand(startdatetime, counterstands, consumptionvalues.Inflows)
+    counterstand_of_inflow_at_start = parser.getCounterStand(startdatetime, counterstands, consumptionvalues.Inflows,
+                                                             {"1-1:1.8.1", "1-1:1.8.2"})
+    counterstand_of_outflow_at_start = parser.getCounterStand(startdatetime, counterstands, consumptionvalues.Outflows,
+                                                              {"1-1:2.8.1", "1-1:2.8.2"})
 
     inflow_data = [obs.Volume for obs in inflow_observations]
     outflow_data = [obs.Volume for obs in outflow_observations]
@@ -48,7 +51,8 @@ def chart_data():
         'inflowData': inflow_data,
         'outflowData': outflow_data,
         'timeLabels': time_labels,
-        'counterstandOfInflowAtStart': counterstand_of_inflow_at_start
+        'counterstandOfInflowAtStart': counterstand_of_inflow_at_start,
+        'counterstandOfOutflowAtStart': counterstand_of_outflow_at_start
     }
 
     return jsonify(data)
