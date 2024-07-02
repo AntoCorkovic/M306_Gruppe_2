@@ -295,6 +295,21 @@ document.addEventListener("DOMContentLoaded", function() {
                                         return label;
                                     }
                                 }
+                            },
+                            zoom: {
+                                zoom: {
+                                    wheel: {
+                                        enabled: true, // Enable zooming with the mouse wheel
+                                    },
+                                    pinch: {
+                                        enabled: true // Enable zooming with pinch gestures
+                                    },
+                                    mode: 'xy' // Allow zooming on both axes
+                                },
+                                pan: {
+                                    enabled: true,
+                                    mode: 'xy' // Allow panning on both axes
+                                }
                             }
                         }
                     }
