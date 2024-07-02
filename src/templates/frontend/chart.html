@@ -14,10 +14,10 @@
     <div class="header" id="header">
         <span>Bezug und Einspeisung</span>
         <div class="header-buttons">
-            <div class="daterange-container">
-                <input type="text" name="daterange" id="daterange" value="01/01/2018 - 01/15/2018" class="daterange-input"/>
-                <span class="daterange-icon">&#x1F4C5;</span> <!-- Kalender Icon -->
-            </div>
+<div class="daterange-container">
+        <input type="text" name="daterange" id="daterange" value="01-01-2019 00:00 - 02-01-2019 23:00" class="daterange-input"/>
+        <span class="daterange-icon">&#x1F4C5;</span> <!-- Calendar Icon -->
+    </div>
             <div class="dropdown">
                 <button id="downloadButton" class="header-button">Download <span class="dropdown-icon"><i class="fas fa-chevron-down"></i></span></button>
                 <div class="dropdown-content">
@@ -35,9 +35,9 @@
                 </div>
             </div>
             <div class="info-boxes">
-                <div class="info-box">Totaler Bezug in diesem Zeitraum</div>
-                <div class="info-box">Totale Einspeisung in diesem Zeitraum</div>
-                <div class="info-box">Durschnittliches Wachstum im vergleich zu all time</div>
+                <div class="info-box" id="total-inflow">Totaler Bezug in diesem Zeitraum</div>
+                <div class="info-box" id="total-outflow">Totale Einspeisung in diesem Zeitraum</div>
+                <div class="info-box" id="average">Durschnittliches Wachstum im vergleich zu all time</div>
             </div>
         </div>
         <div class="bar-chart-wrapper">
