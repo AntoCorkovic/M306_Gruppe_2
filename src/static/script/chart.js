@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
     const loader = document.getElementById("loader");
     const content = document.getElementById("content");
     const combinedCtx = document.getElementById('combinedChart').getContext('2d');
@@ -351,69 +351,67 @@ document.addEventListener("DOMContentLoaded", function() {
                 combinedChart.update();
 
 // Define the time blocks
-const timeBlocks = [
-    { label: '00:00 - 04:59', start: 0, end: 4 },
-    { label: '05:00 - 08:59', start: 5, end: 8 },
-    { label: '09:00 - 12:59', start: 9, end: 12 },
-    { label: '13:00 - 16:59', start: 13, end: 16 },
-    { label: '17:00 - 20:59', start: 17, end: 20 },
-    { label: '21:00 - 23:59', start: 21, end: 23 }
-];
+                const timeBlocks = [
+                    {label: '00:00 - 04:59', start: 0, end: 4},
+                    {label: '05:00 - 08:59', start: 5, end: 8},
+                    {label: '09:00 - 12:59', start: 9, end: 12},
+                    {label: '13:00 - 16:59', start: 13, end: 16},
+                    {label: '17:00 - 20:59', start: 17, end: 20},
+                    {label: '21:00 - 23:59', start: 21, end: 23}
+                ];
 
-const inflowBarData = Array(timeBlocks.length).fill(0);
-const outflowBarData = Array(timeBlocks.length).fill(0);
+                const inflowBarData = Array(timeBlocks.length).fill(0);
+                const outflowBarData = Array(timeBlocks.length).fill(0);
 
 // Aggregate data into time blocks
-timeLabels.forEach((label, index) => {
-    const hour = moment(label).hour();
-    timeBlocks.forEach((block, blockIndex) => {
-        if (hour >= block.start && hour <= block.end) {
-            inflowBarData[blockIndex] += inflowData[index];
-            outflowBarData[blockIndex] += outflowData[index];
-        }
-    });
-});
+                timeLabels.forEach((label, index) => {
+                    const hour = moment(label).hour();
+                    timeBlocks.forEach((block, blockIndex) => {
+                        if (hour >= block.start && hour <= block.end) {
+                            inflowBarData[blockIndex] += inflowData[index];
+                            outflowBarData[blockIndex] += outflowData[index];
+                        }
+                    });
+                });
 
-const barLabels = timeBlocks.map(block => block.label);
+                const barLabels = timeBlocks.map(block => block.label);
 
-const barChartData = {
-    labels: barLabels,
-    datasets: [
-        {
-            label: 'Bezug (kWh)',
-            backgroundColor: 'rgba(75, 192, 192, 0.2)',
-            borderColor: 'rgba(75, 192, 192, 1)',
-            borderWidth: 1,
-            data: inflowBarData
-        },
-        {
-            label: 'Einspeisung (kWh)',
-            backgroundColor: 'rgba(153, 102, 255, 0.2)',
-            borderColor: 'rgba(153, 102, 255, 1)',
-            borderWidth: 1,
-            data: outflowBarData
-        }
-    ]
-};
+                const barChartData = {
+                    labels: barLabels,
+                    datasets: [
+                        {
+                            label: 'Bezug (kWh)',
+                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                            borderColor: 'rgba(75, 192, 192, 1)',
+                            borderWidth: 1,
+                            data: inflowBarData
+                        },
+                        {
+                            label: 'Einspeisung (kWh)',
+                            backgroundColor: 'rgba(153, 102, 255, 0.2)',
+                            borderColor: 'rgba(153, 102, 255, 1)',
+                            borderWidth: 1,
+                            data: outflowBarData
+                        }
+                    ]
+                };
 
-barChart = new Chart(barCtx, {
-    type: 'bar',
-    data: barChartData,
-    options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        scales: {
-            x: {
-                beginAtZero: true
-            },
-            y: {
-                beginAtZero: true
-            }
-        }
-    }
-});
-
-
+                barChart = new Chart(barCtx, {
+                    type: 'bar',
+                    data: barChartData,
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: {
+                                beginAtZero: true
+                            },
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
 
 
                 const maxPoints = 25;
@@ -575,23 +573,31 @@ barChart = new Chart(barCtx, {
                 average_outflow.innerText = `${procentOutflow} %`;
 
                 // Assuming startMoment and endMoment are DateTime values
-const startMoment = moment(data.startdatetime);
-const endMoment = moment(data.enddatetime);
+                const startMoment = moment(data.startdatetime);
+                const endMoment = moment(data.enddatetime);
 
 // Calculate the total duration
-const duration = moment.duration(endMoment.diff(startMoment));
+                const duration = moment.duration(endMoment.diff(startMoment));
 
 // Calculate the total days and remaining hours
-const totalDays = Math.floor(duration.asDays());
-const remainingHours = duration.hours(); // Get the remaining hours after extracting days
+                const totalDays = Math.floor(duration.asDays());
+                const remainingHours = duration.hours(); // Get the remaining hours after extracting days
 
 // Display the time difference
-time_difference.innerText = `${totalDays} d ${remainingHours} h`;
+                time_difference.innerText = `${totalDays} d ${remainingHours} h`;
 
             })
             .catch(error => {
                 loader.style.display = "none";
                 console.error('Error fetching data:', error);
             });
+        document.addEventListener('keydown', (event) => {
+        if (event.ctrlKey && event.key === 'd') {
+            event.preventDefault();
+            document.body.classList.toggle('dark-mode');
+        }
+    });
     }
 });
+
+

@@ -1,6 +1,19 @@
+/* chart (1).css */
+
+/* Farbvariablen */
+:root {
+    --background-color: #f4f4f4; /* Babyblauer Hintergrund */
+    --primary-color: #007bff;
+    --secondary-color: #fff;
+    --text-color: #333;
+    --box-shadow-color: rgba(0, 0, 0, 0.1);
+    --gold-color: #FFD700; /* Goldene Farbe */
+    --purple-color: #800080; /* Lila Farbe */
+}
+
 body {
     font-family: 'Inter', sans-serif;
-    background: #add8e6; /* Babyblauer Hintergrund */
+    background: var(--background-color);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -26,7 +39,6 @@ body {
 .main-wrapper {
     display: flex;
     justify-content: space-between;
-
 }
 
 .main-content {
@@ -41,8 +53,8 @@ body {
 
 .bar-chart-wrapper {
     width: 100%;
-    background: white;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    background: var(--secondary-color);
+    box-shadow: 0 4px 6px var(--box-shadow-color);
     border-radius: 8px;
     padding: 20px;
     box-sizing: border-box; /* Padding in Breitenberechnung einbeziehen */
@@ -55,34 +67,31 @@ body {
     position: relative;
 }
 
-
-
 .info-boxes {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 18px;
     margin: 0;
-
 }
 
 .info-box {
-    background: white;
+    background: var(--secondary-color);
     border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 8px var(--box-shadow-color);
     padding: 20px;
     text-align: center;
     width: 250px; /* Adjust the width as needed */
     font-size: 1.2em;
     font-weight: bold;
-    color: #333;
+    color: var(--text-color);
 }
 
 .info-box span {
     display: block;
     margin-top: 10px;
     font-size: 1.5em;
-    color: #007bff; /* or any color that fits your theme */
+    color: var(--gold-color); /* Goldene Farbe für die Zahlen */
 }
 
 .info-box:last-child {
@@ -97,7 +106,7 @@ canvas {
 #loader {
     border: 16px solid #f3f3f3;
     border-radius: 50%;
-    border-top: 16px solid blue;
+    border-top: 16px solid var(--primary-color);
     width: 120px;
     height: 120px;
     animation: spin 2s linear infinite;
@@ -121,8 +130,8 @@ canvas {
     max-width: 100%; /* Maximale Breite */
     margin: 20px 20px 0px; /* Gleicher Abstand links und rechts, unten 20px */
     padding: 10px 20px;
-    background: white;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    background: var(--secondary-color);
+    box-shadow: 0 4px 6px var(--box-shadow-color);
     border-radius: 8px;
     text-align: center;
     font-size: 20px;
@@ -132,16 +141,26 @@ canvas {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    font-family: 'Electrolize', sans-serif; /* Schriftart für den Header-Titel */
+}
+
+.header span {
+    color: var(--purple-color); /* Lila Farbe für den Text */
+}
+
+.header span .fa-bolt {
+    color: var(--gold-color); /* Goldene Farbe für das Icon */
 }
 
 .header-buttons {
     display: flex;
     align-items: center;
+    margin-left: auto; /* Schiebt die Buttons nach rechts */
 }
 
 .header-button {
-    background-color: #007bff;
-    color: white;
+    background-color: var(--background-color); /* Hintergrundfarbe des Buttons */
+    color: var(--text-color); /* Textfarbe anpassen */
     border: none;
     padding: 10px 20px;
     border-radius: 5px;
@@ -153,12 +172,17 @@ canvas {
     position: relative; /* Ensures dropdown-content aligns with button */
 }
 
+.header-button .dropdown-icon,
+.header-button .download-icon {
+    color: var(--text-color); /* Textfarbe für Icons */
+}
+
 .header-button + .header-button {
     margin-left: 10px; /* Stelle sicher, dass nur aufeinanderfolgende Buttons Abstand haben */
 }
 
 .header-button:hover {
-    background-color: #0056b3;
+    background-color: #0056b3; /* Hover-Farbe */
 }
 
 .daterange-container {
@@ -179,7 +203,7 @@ canvas {
 
 .daterange-input:focus {
     outline: none;
-    border-color: #007bff;
+    border-color: var(--primary-color);
 }
 
 .daterange-icon {
@@ -187,13 +211,13 @@ canvas {
     right: 20px;
     pointer-events: none;
     font-size: 20px;
-    color: #007bff;
+    color: var(--primary-color);
 }
 
 .daterangepicker .applyBtn,
 .daterangepicker .cancelBtn {
-    background-color: #007bff;
-    color: white;
+    background-color: var(--primary-color);
+    color: var(--secondary-color);
     border: none;
     border-radius: 5px;
     padding: 5px 10px;
@@ -216,7 +240,7 @@ canvas {
     position: absolute;
     background-color: #f9f9f9;
     width: 100%; /* Gleiche Breite wie der Dropdown-Button */
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 8px 16px var(--box-shadow-color);
     z-index: 1;
     border-radius: 5px;
     overflow: hidden;
@@ -224,12 +248,16 @@ canvas {
 }
 
 .dropdown-content a {
-    color: black;
+    color: black; /* Textfarbe */
     padding: 10px 15px;
     text-decoration: none;
     display: flex;
     justify-content: space-between;
     font-size: 14px;
+}
+
+.dropdown-content a .download-icon {
+    color: black; /* Textfarbe für Icons */
 }
 
 .dropdown-content a:hover {
@@ -267,8 +295,8 @@ canvas {
 }
 
 .left-box {
-    background: white;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    background: var(--secondary-color);
+    box-shadow: 0 4px 6px var(--box-shadow-color);
     border-radius: 8px;
     padding: 20px;
     display: flex;
@@ -283,8 +311,8 @@ canvas {
 
 .file-table-wrapper {
     flex-grow: 1; /* Tabelle nimmt die restliche verfügbare Breite ein */
-    background: white;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    background: var(--secondary-color);
+    box-shadow: 0 4px 6px var(--box-shadow-color);
     border-radius: 8px;
     padding: 20px;
     box-sizing: border-box;
@@ -304,8 +332,8 @@ canvas {
 }
 
 .file-table th {
-    background-color: #007bff;
-    color: white;
+    background-color: var(--primary-color);
+    color: var(--secondary-color);
     font-weight: bold;
     position: sticky;
     top: 0;
@@ -313,7 +341,7 @@ canvas {
 }
 
 .file-table td {
-    background-color: #fff;
+    background-color: var(--secondary-color);
 }
 
 .file-table tr:nth-child(even) {
@@ -337,8 +365,8 @@ canvas {
 
 /* Reusing the style of header-button for download-button */
 .download-button {
-    background-color: #007bff;
-    color: white;
+    background-color: var(--background-color); /* Hintergrundfarbe des Buttons */
+    color: var(--text-color); /* Textfarbe anpassen */
     border: none;
     padding: 10px 20px;
     border-radius: 5px;
@@ -348,13 +376,12 @@ canvas {
     align-items: center;
 }
 
-.download-button:hover {
-    background-color: #0056b3;
+.download-button .download-icon {
+    color: var(--text-color); /* Textfarbe für Icons */
 }
 
-.download-icon {
-    margin-left: 5px;
-    font-size: 16px;
+.download-button:hover {
+    background-color: #0056b3; /* Hover-Farbe */
 }
 
 .pagination {
@@ -365,8 +392,8 @@ canvas {
 }
 
 .page-btn {
-    background-color: #007bff;
-    color: white;
+    background-color: var(--primary-color);
+    color: var(--secondary-color);
     border: none;
     padding: 10px 20px;
     border-radius: 5px;
@@ -381,4 +408,57 @@ canvas {
 
 #pageIndicator {
     font-size: 16px;
+}
+
+/* Darkmode Farben überschreiben */
+body.dark-mode {
+    --background-color: #181818;
+    --primary-color: #1e90ff;
+    --secondary-color: #2c2c2c;
+    --text-color: #f0f0f0;
+    --box-shadow-color: rgba(0, 0, 0, 0.5);
+    --gold-color: #FFD700; /* Goldene Farbe */
+    --purple-color: #9370DB; /* Lila Farbe im Darkmode */
+}
+
+body.dark-mode .daterange-input {
+    background-color: var(--secondary-color);
+    color: var(--text-color);
+}
+
+body.dark-mode .header-button {
+    background-color: var(--background-color); /* Hintergrundfarbe des Buttons */
+    color: var(--text-color); /* Textfarbe anpassen */
+    border: none;
+}
+
+body.dark-mode .header-button .dropdown-icon,
+body.dark-mode .header-button .download-icon {
+    color: var(--text-color); /* Textfarbe für Icons */
+}
+
+body.dark-mode .header-button:hover {
+    background-color: #0056b3; /* Hover-Farbe */
+}
+
+body.dark-mode .download-button {
+    background-color: var(--background-color); /* Hintergrundfarbe des Buttons */
+    color: var(--text-color); /* Textfarbe anpassen */
+    border: none;
+}
+
+body.dark-mode .download-button .download-icon {
+    color: var(--text-color); /* Textfarbe für Icons */
+}
+
+body.dark-mode .download-button:hover {
+    background-color: #0056b3; /* Hover-Farbe */
+}
+
+body.dark-mode .dropdown-content a {
+    color: black; /* Textfarbe */
+}
+
+body.dark-mode .dropdown-content a .download-icon {
+    color: black; /* Textfarbe für Icons */
 }
