@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <title>Bezug und Einspeisung</title>
+    <title>Dashboard</title>
     <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css">
@@ -12,12 +12,12 @@
 <body>
     <div id="loader"></div>
     <div class="header" id="header">
-        <span>Bezug und Einspeisung</span>
+        <span>Dashboard</span>
         <div class="header-buttons">
-<div class="daterange-container">
-        <input type="text" name="daterange" id="daterange" value="01-01-2019 00:00 - 02-01-2019 23:00" class="daterange-input"/>
-        <span class="daterange-icon">&#x1F4C5;</span> <!-- Calendar Icon -->
-    </div>
+            <div class="daterange-container">
+                <input type="text" name="daterange" id="daterange" value="01-01-2019 00:00 - 02-01-2019 23:00" class="daterange-input"/>
+                <span class="daterange-icon">&#x1F4C5;</span> <!-- Calendar Icon -->
+            </div>
             <div class="dropdown">
                 <button id="downloadButton" class="header-button">Download <span class="dropdown-icon"><i class="fas fa-chevron-down"></i></span></button>
                 <div class="dropdown-content">
@@ -29,47 +29,42 @@
     </div>
     <div class="content hidden" id="content">
         <div class="main-wrapper">
-            <div class="main-content">
+            <div class="main-content bar-chart-wrapper">
                 <div class="chart-container">
                     <canvas id="combinedChart"></canvas>
                 </div>
             </div>
             <div class="info-boxes">
-                <div class="info-box" id="total-inflow">Totaler Bezug in diesem Zeitraum</div>
-                <div class="info-box" id="total-outflow">Totale Einspeisung in diesem Zeitraum</div>
-                <div class="info-box" id="average">Durschnittliches Wachstum im vergleich zu all time</div>
-            </div>
+    <div class="info-box" id="total-inflow">
+        Total Bezug: <span id="total-inflow-value">84.9 kWh</span>
+    </div>
+    <div class="info-box" id="total-outflow">
+        Total Einspeisung: <span id="total-outflow-value">176.7 kWh</span>
+    </div>
+    <div class="info-box" id="average">
+        Bezug: <span id="average-inflow">32.45 %</span>Einspeisung: <span id="average-outflow">67.55 %</span>
+    </div>
+                    <div class="info-box" id="time-difference">
+        Zeitraum: <span id="time-differnce-value">84.9 kWh</span>
+    </div>
+</div>
+
         </div>
         <div class="bar-chart-wrapper">
             <div class="bar-chart-container">
                 <canvas id="barChart"></canvas>
             </div>
         </div>
-        <div class="bottom-section">
-            <div class="left-boxes">
-                <div class="left-box">Pie Chart (Bezug/Einspeisung)</div>
-                <div class="left-box">KEINE AHNUNG WAS HIER SEIN SOLL</div>
-            </div>
-            <div class="file-table-wrapper">
-                <table class="file-table">
-                    <thead>
-                        <tr>
-                            <th>Filename</th>
-                            <th>Status</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody id="fileTableBody">
-                        <!-- Fake data will be inserted here by JavaScript -->
-                    </tbody>
-                </table>
-                <div class="pagination">
-                    <button class="page-btn" id="prevPage">Previous</button>
-                    <span id="pageIndicator"></span>
-                    <button class="page-btn" id="nextPage">Next</button>
-                </div>
-            </div>
+        <div class="bar-chart-wrapper">
+    <div class="chart-container">
+        <canvas id="counterChart"></canvas> <!-- New Canvas for Zählerstände -->
+    </div>
         </div>
+        <div class="bar-chart-wrapper">
+    <div class="chart-container">
+        <canvas id="lineChart"></canvas> <!-- New Canvas for Verbrauch & Einspeisung -->
+    </div>
+</div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
@@ -77,8 +72,6 @@
     <script src="https://cdn.jsdelivr.net/npm/moment/min/moment.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
     <script src="{{ url_for('static', filename='script/chart.js') }}"></script>
-
-<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom/dist/chartjs-plugin-zoom.min.js"></script>
-
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom/dist/chartjs-plugin-zoom.min.js"></script>
 </body>
 </html>

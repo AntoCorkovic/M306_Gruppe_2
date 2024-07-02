@@ -25,18 +25,13 @@ body {
 
 .main-wrapper {
     display: flex;
-    width: 100%;
-    box-sizing: border-box; /* Padding in Breitenberechnung einbeziehen */
-    padding-bottom: 20px; /* Abstand zwischen Hauptabteilen */
+    justify-content: space-between;
+
 }
 
 .main-content {
-    width: 66.66%;
-    background: white;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-    padding: 20px;
-    box-sizing: border-box; /* Padding in Breitenberechnung einbeziehen */
+    flex: 1;
+    margin-right: 20px;
 }
 
 .chart-container {
@@ -60,25 +55,34 @@ body {
     position: relative;
 }
 
+
+
 .info-boxes {
-    width: 33.33%;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    padding-left: 20px;
-    box-sizing: border-box; /* Padding in Breitenberechnung einbeziehen */
+    align-items: center;
+    gap: 18px;
+    margin: 0;
+
 }
 
 .info-box {
-    flex: 1;
     background: white;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     padding: 20px;
-    margin-bottom: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    text-align: center;
+    width: 250px; /* Adjust the width as needed */
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #333;
+}
+
+.info-box span {
+    display: block;
+    margin-top: 10px;
+    font-size: 1.5em;
+    color: #007bff; /* or any color that fits your theme */
 }
 
 .info-box:last-child {
@@ -169,7 +173,7 @@ canvas {
     padding: 12px 15px;
     font-size: 16px;
     margin-right: 10px;
-    width: 250px;
+    width: 325px;
     box-sizing: border-box;
 }
 

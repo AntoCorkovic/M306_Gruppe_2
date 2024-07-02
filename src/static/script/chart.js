@@ -3,6 +3,8 @@ document.addEventListener("DOMContentLoaded", function() {
     const content = document.getElementById("content");
     const combinedCtx = document.getElementById('combinedChart').getContext('2d');
     const barCtx = document.getElementById('barChart').getContext('2d');
+    const counterCtx = document.getElementById('counterChart').getContext('2d');
+    const lineCtx = document.getElementById('lineChart').getContext('2d');
     const downloadButton = document.getElementById('downloadButton');
     const downloadCSV = document.getElementById('downloadCSV');
     const downloadJSON = document.getElementById('downloadJSON');
@@ -18,10 +20,12 @@ document.addEventListener("DOMContentLoaded", function() {
 
     let combinedChart = null;
     let barChart = null;
+    let counterChart = null;
+    let lineChart = null;
 
     loader.style.display = "block";
 
-    $(function() {
+    $(function () {
         $('input[name="daterange"]').daterangepicker({
             timePicker: true,
             timePicker24Hour: true,
@@ -30,7 +34,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 format: 'DD-MM-YYYY HH:mm'
             },
             opens: 'left'
-        }, function(start, end, label) {
+        }, function (start, end, label) {
             console.log("A new date selection was made: " + start.format('YYYY-MM-DD HH:mm') + ' to ' + end.format('YYYY-MM-DD HH:mm'));
             showData(start.format('DD-MM-YYYY HH:mm'), end.format('DD-MM-YYYY HH:mm'));
         });
@@ -62,7 +66,7 @@ document.addEventListener("DOMContentLoaded", function() {
             });
     };
 
-    downloadButton.addEventListener('click', function() {
+    downloadButton.addEventListener('click', function () {
         dropdownContent.classList.toggle('show');
     });
 
@@ -74,7 +78,7 @@ document.addEventListener("DOMContentLoaded", function() {
         } else if (format === 'json') {
             content = JSON.stringify(data, null, 2);
         }
-        const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+        const blob = new Blob([content], {type: 'text/plain;charset=utf-8'});
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
@@ -109,7 +113,7 @@ document.addEventListener("DOMContentLoaded", function() {
         const maxValue = Math.max(...data);
         const range = maxValue - minValue;
         const buffer = Math.ceil((range * 0.1) / 10) * 10; // 10% Puffer basierend auf dem Bereich, gerundet auf den nächsten Zehner
-        return { min: Math.floor((minValue - buffer) / 10) * 10, max: Math.ceil((maxValue + buffer) / 10) * 10 };
+        return {min: Math.floor((minValue - buffer) / 10) * 10, max: Math.ceil((maxValue + buffer) / 10) * 10};
     };
 
     const updateAxes = (chart, inflowLimits, outflowLimits) => {
@@ -127,6 +131,19 @@ document.addEventListener("DOMContentLoaded", function() {
                 console.log(data); // Debugging the loaded data
                 loader.style.display = "none";
                 content.classList.remove("hidden");
+
+                const compactData = (data, labels, maxPoints) => {
+                    const interval = Math.max(1, Math.floor(data.length / maxPoints));
+                    const compactedData = [];
+                    const compactedLabels = [];
+
+                    for (let i = 0; i < data.length; i += interval) {
+                        compactedData.push(data[i]);
+                        compactedLabels.push(labels[i]);
+                    }
+
+                    return {data: compactedData, labels: compactedLabels};
+                };
 
                 const inflowData = data.inflowData;
                 const outflowData = data.outflowData;
@@ -155,12 +172,17 @@ document.addEventListener("DOMContentLoaded", function() {
                 const inflowLimits = calculateAxisLimits(cumulativeInflowData);
                 const outflowLimits = calculateAxisLimits(cumulativeOutflowData);
 
+
+                const maxPointssum = 75;
+                const compactedCombinedInflow = compactData(cumulativeInflowData, timeLabels, maxPointssum);
+                const compactedCombinedOutflow = compactData(cumulativeOutflowData, timeLabels, maxPointssum);
+
                 const combinedChartData = {
-                    labels: timeLabels,
+                    labels: compactedCombinedInflow.labels,
                     datasets: [
                         {
                             label: 'Bezug (kWh)',
-                            data: cumulativeInflowData,
+                            data: compactedCombinedInflow.data,
                             backgroundColor: 'rgba(75, 192, 192, 0.2)',
                             borderColor: 'rgba(75, 192, 192, 1)',
                             borderWidth: 1,
@@ -172,7 +194,7 @@ document.addEventListener("DOMContentLoaded", function() {
                         },
                         {
                             label: 'Einspeisung (kWh)',
-                            data: cumulativeOutflowData,
+                            data: compactedCombinedOutflow.data,
                             backgroundColor: 'rgba(153, 102, 255, 0.2)',
                             borderColor: 'rgba(153, 102, 255, 1)',
                             borderWidth: 1,
@@ -191,6 +213,12 @@ document.addEventListener("DOMContentLoaded", function() {
                 }
                 if (barChart) {
                     barChart.destroy();
+                }
+                if (counterChart) {
+                    counterChart.destroy();
+                }
+                if (lineChart) {
+                    lineChart.destroy();
                 }
 
                 combinedChart = new Chart(combinedCtx, {
@@ -322,158 +350,244 @@ document.addEventListener("DOMContentLoaded", function() {
                 updateAxes(combinedChart, inflowLimits, outflowLimits);
                 combinedChart.update();
 
-                // Adding the bar chart initialization
-                const numberOfBars = 6;
-                const inflowBarData = [];
-                const outflowBarData = [];
-                const barLabels = [];
-                const inflowInterval = Math.floor(inflowData.length / numberOfBars);
-                const outflowInterval = Math.floor(outflowData.length / numberOfBars);
+// Define the time blocks
+const timeBlocks = [
+    { label: '00:00 - 04:59', start: 0, end: 4 },
+    { label: '05:00 - 08:59', start: 5, end: 8 },
+    { label: '09:00 - 12:59', start: 9, end: 12 },
+    { label: '13:00 - 16:59', start: 13, end: 16 },
+    { label: '17:00 - 20:59', start: 17, end: 20 },
+    { label: '21:00 - 23:59', start: 21, end: 23 }
+];
 
-                for (let i = 0; i < numberOfBars; i++) {
-                    const inflowSlice = inflowData.slice(i * inflowInterval, (i + 1) * inflowInterval);
-                    const outflowSlice = outflowData.slice(i * outflowInterval, (i + 1) * outflowInterval);
-                    inflowBarData.push(inflowSlice.reduce((a, b) => a + b, 0));
-                    outflowBarData.push(outflowSlice.reduce((a, b) => a + b, 0));
-                    const startTime = moment(timeLabels[i * inflowInterval]);
-                    const endTime = moment(timeLabels[Math.min((i + 1) * inflowInterval, timeLabels.length - 1)]);
-                    barLabels.push(`${startTime.format('HH:mm')} - ${endTime.format('HH:mm')}`);
-                }
+const inflowBarData = Array(timeBlocks.length).fill(0);
+const outflowBarData = Array(timeBlocks.length).fill(0);
 
-                if (inflowData.length % numberOfBars !== 0) {
-                    inflowBarData.push(inflowData.slice(numberOfBars * inflowInterval).reduce((a, b) => a + b, 0));
-                    outflowBarData.push(outflowData.slice(numberOfBars * outflowInterval).reduce((a, b) => a + b, 0));
-                    const startTime = moment(timeLabels[numberOfBars * inflowInterval]);
-                    const endTime = moment(timeLabels[timeLabels.length - 1]);
-                    barLabels.push(`${startTime.format('HH:mm')} - ${endTime.format('HH:mm')}`);
-                }
+// Aggregate data into time blocks
+timeLabels.forEach((label, index) => {
+    const hour = moment(label).hour();
+    timeBlocks.forEach((block, blockIndex) => {
+        if (hour >= block.start && hour <= block.end) {
+            inflowBarData[blockIndex] += inflowData[index];
+            outflowBarData[blockIndex] += outflowData[index];
+        }
+    });
+});
 
-                const barChartData = {
-                    labels: barLabels,
+const barLabels = timeBlocks.map(block => block.label);
+
+const barChartData = {
+    labels: barLabels,
+    datasets: [
+        {
+            label: 'Bezug (kWh)',
+            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+            borderColor: 'rgba(75, 192, 192, 1)',
+            borderWidth: 1,
+            data: inflowBarData
+        },
+        {
+            label: 'Einspeisung (kWh)',
+            backgroundColor: 'rgba(153, 102, 255, 0.2)',
+            borderColor: 'rgba(153, 102, 255, 1)',
+            borderWidth: 1,
+            data: outflowBarData
+        }
+    ]
+};
+
+barChart = new Chart(barCtx, {
+    type: 'bar',
+    data: barChartData,
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+            x: {
+                beginAtZero: true
+            },
+            y: {
+                beginAtZero: true
+            }
+        }
+    }
+});
+
+
+
+
+                const maxPoints = 25;
+                const compactedInflow = compactData(cumulativeInflowData, timeLabels, maxPoints);
+                const compactedOutflow = compactData(cumulativeOutflowData, timeLabels, maxPoints);
+
+                const counterChartData = {
+                    labels: compactedInflow.labels,
                     datasets: [
                         {
-                            label: 'Bezug (kWh)',
+                            label: 'Zählerstand Verbrauch (kWh)',
+                            data: compactedInflow.data,
                             backgroundColor: 'rgba(75, 192, 192, 0.2)',
                             borderColor: 'rgba(75, 192, 192, 1)',
                             borderWidth: 1,
-                            data: inflowBarData
+                            fill: false,
+                            tension: 0.1,
+                            pointRadius: 5,
+                            pointHoverRadius: 10,
+                            yAxisID: 'y'
                         },
                         {
-                            label: 'Einspeisung (kWh)',
+                            label: 'Zählerstand Einspeisung (kWh)',
+                            data: compactedOutflow.data,
                             backgroundColor: 'rgba(153, 102, 255, 0.2)',
                             borderColor: 'rgba(153, 102, 255, 1)',
                             borderWidth: 1,
-                            data: outflowBarData
+                            fill: false,
+                            tension: 0.1,
+                            pointRadius: 5,
+                            pointHoverRadius: 10,
+                            yAxisID: 'y'
                         }
                     ]
                 };
 
-                barChart = new Chart(barCtx, {
+                counterChart = new Chart(counterCtx, {
                     type: 'bar',
-                    data: barChartData,
+                    data: counterChartData,
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
                         scales: {
                             x: {
-                                beginAtZero: true
+                                type: 'category'
                             },
                             y: {
-                                beginAtZero: true
+                                type: 'linear',
+                                position: 'left',
+                                title: {
+                                    display: true,
+                                    text: 'Zählerstände Verbrauch / Einspeisung (kWh)'
+                                }
+                            },
+
+                        },
+                        plugins: {
+                            zoom: {
+                                zoom: {
+                                    wheel: {
+                                        enabled: true, // Enable zooming with the mouse wheel
+                                    },
+                                    pinch: {
+                                        enabled: true // Enable zooming with pinch gestures
+                                    },
+                                    mode: 'xy' // Allow zooming on both axes
+                                },
+                                pan: {
+                                    enabled: true,
+                                    mode: 'xy' // Allow panning on both axes
+                                }
                             }
                         }
                     }
                 });
 
-                // Fake data for files
-                const fileTableBody = document.getElementById('fileTableBody');
-                const fakeFiles = [
-                    {filename: 'file1.txt', status: 'Bezug'},
-                    {filename: 'file2.txt', status: 'Einspeisung'},
-                    {filename: 'file3.txt', status: 'Bezug'},
-                    {filename: 'file4.txt', status: 'Einspeisung'},
-                    {filename: 'file5.txt', status: 'Bezug'},
-                    {filename: 'file6.txt', status: 'Einspeisung'},
-                    {filename: 'file7.txt', status: 'Bezug'},
-                    {filename: 'file8.txt', status: 'Einspeisung'},
-                    {filename: 'file9.txt', status: 'Bezug'},
-                    {filename: 'file10.txt', status: 'Einspeisung'},
-                    {filename: 'file11.txt', status: 'Bezug'},
-                    {filename: 'file12.txt', status: 'Einspeisung'},
-                    {filename: 'file13.txt', status: 'Bezug'},
-                    {filename: 'file14.txt', status: 'Einspeisung'},
-                    {filename: 'file15.txt', status: 'Bezug'},
-                    {filename: 'file16.txt', status: 'Einspeisung'},
-                    {filename: 'file17.txt', status: 'Bezug'},
-                    {filename: 'file18.txt', status: 'Einspeisung'},
-                    {filename: 'file19.txt', status: 'Bezug'},
-                    {filename: 'file20.txt', status: 'Einspeisung'}
-                ];
-                const total_inflow = document.getElementById('total-inflow');
-                const total_outflow = document.getElementById('total-outflow');
-                const average = document.getElementById('average');
 
-                total_inflow.innerText = `Total Bezug: ${totalInflow} kWh`;
-                total_outflow.innerText = `Total Einspeisung: ${totalOutflow} kWh`;
-                average.innerText = ` Bezug: ${procentInflow} %,  Einspeisung: ${procentOutflow} %`;
+                const maxPointsline = 75;
+                const compactedInflowLine = compactData(inflowData, timeLabels, maxPointsline);
+                const compactedOutflowLine = compactData(outflowData, timeLabels, maxPointsline);
 
-                const renderTable = (page = 1) => {
-                    const start = (page - 1) * rowsPerPage;
-                    const end = start + rowsPerPage;
-                    const filesToDisplay = fakeFiles.slice(start, end);
-
-                    fileTableBody.innerHTML = '';
-                    filesToDisplay.forEach(file => {
-                        const row = document.createElement('tr');
-                        const filenameCell = document.createElement('td');
-                        const statusCell = document.createElement('td');
-                        const actionCell = document.createElement('td');
-                        const downloadButton = document.createElement('button');
-                        const icon = document.createElement('i');
-                        const statusIcon = document.createElement('i');
-
-                        filenameCell.textContent = file.filename;
-
-                        statusIcon.className = 'fas fa-bolt';
-                        statusIcon.style.color = file.status === 'Bezug' ? 'rgba(153, 102, 255, 1)' : 'rgba(75, 192, 192, 1)';
-
-                        statusCell.className = 'file-status';
-                        statusCell.appendChild(statusIcon);
-                        statusCell.appendChild(document.createTextNode(file.status));
-
-                        downloadButton.className = 'download-button';
-                        downloadButton.textContent = 'Download';
-                        icon.className = 'fas fa-download download-icon';
-                        downloadButton.appendChild(icon);
-                        actionCell.appendChild(downloadButton);
-
-                        row.appendChild(filenameCell);
-                        row.appendChild(statusCell);
-                        row.appendChild(actionCell);
-
-                        fileTableBody.appendChild(row);
-                    });
-
-                    pageIndicator.textContent = `Page ${page} of ${Math.ceil(fakeFiles.length / rowsPerPage)}`;
-                    prevPageBtn.disabled = page === 1;
-                    nextPageBtn.disabled = page === Math.ceil(fakeFiles.length / rowsPerPage);
+                const lineChartData = {
+                    labels: compactedInflowLine.labels,
+                    datasets: [
+                        {
+                            label: 'Verbrauch (kWh)',
+                            data: compactedInflowLine.data,
+                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                            borderColor: 'rgba(75, 192, 192, 1)',
+                            borderWidth: 1,
+                            fill: false,
+                            tension: 0.1,
+                            pointRadius: 5,
+                            pointHoverRadius: 10
+                        },
+                        {
+                            label: 'Einspeisung (kWh)',
+                            data: compactedOutflowLine.data,
+                            backgroundColor: 'rgba(153, 102, 255, 0.2)',
+                            borderColor: 'rgba(153, 102, 255, 1)',
+                            borderWidth: 1,
+                            fill: false,
+                            tension: 0.1,
+                            pointRadius: 5,
+                            pointHoverRadius: 10
+                        }
+                    ]
                 };
 
-                renderTable(currentPage);
 
-                prevPageBtn.addEventListener('click', () => {
-                    if (currentPage > 1) {
-                        currentPage--;
-                        renderTable(currentPage);
+                lineChart = new Chart(lineCtx, {
+                    type: 'line',
+                    data: lineChartData,
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: {
+                                type: 'category'
+                            },
+                            y: {
+                                type: 'linear',
+                                position: 'left',
+                                title: {
+                                    display: true,
+                                    text: 'Verbrauch & Einspeisung (kWh)'
+                                }
+                            }
+                        },
+                        plugins: {
+                            zoom: {
+                                zoom: {
+                                    wheel: {
+                                        enabled: true, // Enable zooming with the mouse wheel
+                                    },
+                                    pinch: {
+                                        enabled: true // Enable zooming with pinch gestures
+                                    },
+                                    mode: 'xy' // Allow zooming on both axes
+                                },
+                                pan: {
+                                    enabled: true,
+                                    mode: 'xy' // Allow panning on both axes
+                                }
+                            }
+                        }
                     }
                 });
 
-                nextPageBtn.addEventListener('click', () => {
-                    if (currentPage < Math.ceil(fakeFiles.length / rowsPerPage)) {
-                        currentPage++;
-                        renderTable(currentPage);
-                    }
-                });
+                const total_inflow = document.getElementById('total-inflow-value');
+                const total_outflow = document.getElementById('total-outflow-value');
+                const average_inflow = document.getElementById('average-inflow');
+                const average_outflow = document.getElementById('average-outflow');
+                const time_difference = document.getElementById('time-differnce-value');
+
+                total_inflow.innerText = `${totalInflow} kWh`;
+                total_outflow.innerText = `${totalOutflow} kWh`;
+                average_inflow.innerText = `${procentInflow} %`;
+                average_outflow.innerText = `${procentOutflow} %`;
+
+                // Assuming startMoment and endMoment are DateTime values
+const startMoment = moment(data.startdatetime);
+const endMoment = moment(data.enddatetime);
+
+// Calculate the total duration
+const duration = moment.duration(endMoment.diff(startMoment));
+
+// Calculate the total days and remaining hours
+const totalDays = Math.floor(duration.asDays());
+const remainingHours = duration.hours(); // Get the remaining hours after extracting days
+
+// Display the time difference
+time_difference.innerText = `${totalDays} d ${remainingHours} h`;
+
             })
             .catch(error => {
                 loader.style.display = "none";

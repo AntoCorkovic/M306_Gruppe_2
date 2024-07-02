@@ -73,7 +73,9 @@ def chart_data():
         'totalInflow': total_inflow,
         'totalOutflow': total_outflow,
         'procentInflow': procent_inflow,
-        'procentOutflow': procent_outflow
+        'procentOutflow': procent_outflow,
+        "startdatetime": startdatetime,
+        "enddatetime": enddatetime,
     }
 
     return jsonify(data)
