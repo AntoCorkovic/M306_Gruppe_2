@@ -52,6 +52,7 @@ document.addEventListener("DOMContentLoaded", function() {
         return fetch(url)
             .then(response => {
                 if (!response.ok) {
+                    alert('Unfournately we dont have date for this period. Please select another period.');
                     throw new Error('Network response was not ok');
                 }
                 return response.json();
@@ -328,10 +329,12 @@ document.addEventListener("DOMContentLoaded", function() {
                                 zoom: {
                                     wheel: {
                                         enabled: true, // Enable zooming with the mouse wheel
+                                        modifierKey: 'ctrl',
                                     },
                                     pinch: {
                                         enabled: true // Enable zooming with pinch gestures
                                     },
+
                                     mode: 'xy' // Allow zooming on both axes
                                 },
                                 pan: {
@@ -475,6 +478,7 @@ barChart = new Chart(barCtx, {
                                 zoom: {
                                     wheel: {
                                         enabled: true, // Enable zooming with the mouse wheel
+                                        modifierKey: 'ctrl',
                                     },
                                     pinch: {
                                         enabled: true // Enable zooming with pinch gestures
@@ -548,6 +552,7 @@ barChart = new Chart(barCtx, {
                                 zoom: {
                                     wheel: {
                                         enabled: true, // Enable zooming with the mouse wheel
+                                        modifierKey: 'ctrl',
                                     },
                                     pinch: {
                                         enabled: true // Enable zooming with pinch gestures
