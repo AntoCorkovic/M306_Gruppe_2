@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const content = document.getElementById("content");
     const combinedCtx = document.getElementById('combinedChart').getContext('2d');
     const barCtx = document.getElementById('barChart').getContext('2d');
-    const counterCtx = document.getElementById('counterChart').getContext('2d');
+    //const counterCtx = document.getElementById('counterChart').getContext('2d');
     const lineCtx = document.getElementById('lineChart').getContext('2d');
     const downloadButton = document.getElementById('downloadButton');
     const downloadCSV = document.getElementById('downloadCSV');
@@ -449,53 +449,12 @@ document.addEventListener("DOMContentLoaded", function () {
                             yAxisID: 'y'
                         }
                     ]
-                };
-
-                counterChart = new Chart(counterCtx, {
-                    type: 'bar',
-                    data: counterChartData,
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        scales: {
-                            x: {
-                                type: 'category'
-                            },
-                            y: {
-                                type: 'linear',
-                                position: 'left',
-                                title: {
-                                    display: true,
-                                    text: 'Zählerstände Verbrauch / Einspeisung (kWh)'
-                                }
-                            },
-
-                        },
-                        plugins: {
-                            zoom: {
-                                zoom: {
-                                    wheel: {
-                                        enabled: true, // Enable zooming with the mouse wheel
-                                        modifierKey: 'ctrl',
-                                    },
-                                    pinch: {
-                                        enabled: true // Enable zooming with pinch gestures
-                                    },
-                                    mode: 'xy' // Allow zooming on both axes
-                                },
-                                pan: {
-                                    enabled: true,
-                                    mode: 'xy' // Allow panning on both axes
-                                }
-                            }
-                        }
-                    }
-                });
+                }
 
 
-                const maxPointsline = 75;
-                const compactedInflowLine = compactData(inflowData, timeLabels, maxPointsline);
-                const compactedOutflowLine = compactData(outflowData, timeLabels, maxPointsline);
+                const maxPointsLine = 75;
+                const compactedInflowLine = compactData(inflowData, timeLabels, maxPointsLine);
+                const compactedOutflowLine = compactData(outflowData, timeLabels, maxPointsLine);
 
                 const lineChartData = {
                     labels: compactedInflowLine.labels,
@@ -581,14 +540,14 @@ document.addEventListener("DOMContentLoaded", function () {
                 const startMoment = moment(data.startdatetime);
                 const endMoment = moment(data.enddatetime);
 
-// Calculate the total duration
+                // Calculate the total duration
                 const duration = moment.duration(endMoment.diff(startMoment));
 
-// Calculate the total days and remaining hours
+                // Calculate the total days and remaining hours
                 const totalDays = Math.floor(duration.asDays());
                 const remainingHours = duration.hours(); // Get the remaining hours after extracting days
 
-// Display the time difference
+                // Display the time difference
                 time_difference.innerText = `${totalDays} d ${remainingHours} h`;
 
             })
@@ -599,10 +558,8 @@ document.addEventListener("DOMContentLoaded", function () {
         document.addEventListener('keydown', (event) => {
         if (event.ctrlKey && event.key === 'd') {
             event.preventDefault();
-            document.body.classList.toggle('dark-mode');
+            document.body.classList.toggle('dark-mode')
         }
-    });
+    })
     }
-});
-
-
+})

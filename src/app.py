@@ -1,4 +1,3 @@
-import json
 from datetime import datetime, timedelta
 
 from flask import Flask, render_template, jsonify, request
@@ -9,6 +8,7 @@ app = Flask(__name__)
 
 counterstands = None
 consumptionvalues = None
+
 
 @app.route('/')
 def hello_world():  # put application's code here
@@ -21,7 +21,6 @@ def ui():
     return render_template('frontend/index.html')
 
 
-
 @app.route('/chart')
 def chart():
     return render_template('frontend/chart.html')
@@ -32,12 +31,11 @@ def chart_data():
     global counterstands, consumptionvalues
     parser = Parser()
 
-    if(counterstands is None and consumptionvalues is None):
+    if counterstands is None and consumptionvalues is None:
         counterstands = parser.parse_counterstands()
         consumptionvalues = parser.parse_consumptionvalues()
 
-
-    # Extract startdatetime and enddatetime from the request
+    # Extract start-datetime and end-datetime from the request
     startdatetime_str = request.args.get('startdatetime')
     enddatetime_str = request.args.get('enddatetime')
 
