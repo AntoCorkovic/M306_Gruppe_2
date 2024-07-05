@@ -16,8 +16,6 @@ def hello_world():  # put application's code here
         print(e)
     print(consumptionvalues)
 
-
-
     return 'Hello World!'
 
 
