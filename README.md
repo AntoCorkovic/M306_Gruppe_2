@@ -1,5 +1,15 @@
 # PowerStream
 
+
+## Wie starten
+1. Pull
+2. Auf Branch "add-date-pciker-functionality" auschecken
+3. app.py laufen lassen
+4. Folgende Seite aufrufen: http://127.0.0.1:5000/chart
+5. Bestaunen und bitte nichts am Code ändern danke
+
+Wenn jeman Änderungen vornehmen will diese auf einem anderen Branch machen!
+
 ## Softwareumfang
 Entwerfen und Programmieren Sie eine Software welche:
 Muss:

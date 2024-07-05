@@ -1,29 +1,84 @@
-from flask import Flask, render_template
+import json
+from datetime import datetime, timedelta
+
+from flask import Flask, render_template, jsonify, request
 
 from src.parser import Parser
 
 app = Flask(__name__)
 
+counterstands = None
+consumptionvalues = None
 
 @app.route('/')
 def hello_world():  # put application's code here
-    parser = Parser()
 
-    counterstands = parser.parse_counterstands()
-    try:
-       consumptionvalues = parser.parse_consumptionvalues()
-    except Exception as e:
-        print(e)
-    print(consumptionvalues)
-
-    return 'Hello World!'
+    pass
 
 
 @app.route('/ui')
-def ui():  # put application's code here
-
-
+def ui():
     return render_template('frontend/index.html')
+
+
+
+@app.route('/chart')
+def chart():
+    return render_template('frontend/chart.html')
+
+
+@app.route('/chart/data')
+def chart_data():
+    global counterstands, consumptionvalues
+    parser = Parser()
+
+    if(counterstands is None and consumptionvalues is None):
+        counterstands = parser.parse_counterstands()
+        consumptionvalues = parser.parse_consumptionvalues()
+
+    # Extract startdatetime and enddatetime from the request
+    startdatetime_str = request.args.get('startdatetime')
+    enddatetime_str = request.args.get('enddatetime')
+
+    # Convert the datetime strings to datetime objects
+    startdatetime = datetime.strptime(startdatetime_str, '%d-%m-%Y %H:%M')
+    enddatetime = datetime.strptime(enddatetime_str, '%d-%m-%Y %H:%M')
+
+
+    inflow_observations = parser.getObservationsForASpecificDuraction(startdatetime, enddatetime,
+                                                                      consumptionvalues.Inflows)
+    outflow_observations = parser.getObservationsForASpecificDuraction(startdatetime, enddatetime,
+                                                                       consumptionvalues.Outflows)
+    counterstand_of_inflow_at_start = parser.getCounterStand(startdatetime, counterstands, consumptionvalues.Inflows,
+                                                             {"1-1:1.8.1", "1-1:1.8.2"})
+    counterstand_of_outflow_at_start = parser.getCounterStand(startdatetime, counterstands, consumptionvalues.Outflows,
+                                                              {"1-1:2.8.1", "1-1:2.8.2"})
+
+    inflow_data = [obs.Volume for obs in inflow_observations]
+    outflow_data = [obs.Volume for obs in outflow_observations]
+    time_labels = [(startdatetime + timedelta(minutes=15 * i)).strftime('%d-%m-%Y %H:%M') for i in
+                   range(len(inflow_data))]
+
+    total_inflow = round(sum(inflow_data), 2)
+    total_outflow = round(sum(outflow_data), 2)
+    procent_inflow = round(total_inflow / (total_inflow + total_outflow) * 100, 2)
+    procent_outflow = round(total_outflow / (total_inflow + total_outflow) * 100, 2)
+
+    data = {
+        'inflowData': inflow_data,
+        'outflowData': outflow_data,
+        'timeLabels': time_labels,
+        'counterstandOfInflowAtStart': counterstand_of_inflow_at_start,
+        'counterstandOfOutflowAtStart': counterstand_of_outflow_at_start,
+        'totalInflow': total_inflow,
+        'totalOutflow': total_outflow,
+        'procentInflow': procent_inflow,
+        'procentOutflow': procent_outflow,
+        "startdatetime": startdatetime,
+        "enddatetime": enddatetime,
+    }
+
+    return jsonify(data)
 
 
 if __name__ == '__main__':

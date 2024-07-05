@@ -1,8 +1,13 @@
 import os
-import xml.etree.ElementTree as ET
-
+import xml.etree.ElementTree as elementTree
 from src.models.counterstands import *
 from src.models.consumptionvalues import *
+from datetime import timedelta
+from typing import List, Any
+from src.models.consumptionvalues import Observation
+
+
+
 
 
 class Parser:
@@ -14,7 +19,7 @@ class Parser:
 
         for file in os.listdir(self.OUTFLOW_DIRECTORY):
             try:
-                tree = ET.parse(os.path.join(self.OUTFLOW_DIRECTORY, file))
+                tree = elementTree.parse(os.path.join(self.OUTFLOW_DIRECTORY, file))
                 root = tree.getroot()
 
                 # Parsing Header
@@ -29,7 +34,7 @@ class Parser:
 
                 differenttimeperiods = []
                 for time_period_elem in root.findall('.//TimePeriod'):
-                    time_period = TimePeriod(end=time_period_elem.get('end'))
+                    time_period = TimePeriod(end = datetime.strptime(time_period_elem.get('end'), "%Y-%m-%dT%H:%M:%S"))
 
                     # Parsing ValueRows
                     for value_row_elem in time_period_elem.findall('ValueRow'):
@@ -43,7 +48,7 @@ class Parser:
 
                     counterstands_dict[created_date].timePeriods.append(time_period)
 
-            except ET.ParseError as e:
+            except elementTree.ParseError as e:
                 print(f"Error parsing {file}: {e}")
             except Exception as e:
                 print(f"Unexpected error with {file}: {e}")
@@ -53,12 +58,11 @@ class Parser:
 
         return counterstands_list
 
-
     def parse_consumptionvalues(self) -> InflowAndOutflow():
         inflowandoutflowlist = InflowAndOutflow()
         for file in os.listdir(self.INFLOW_DIRECTORY):
             try:
-                tree = ET.parse(self.INFLOW_DIRECTORY + '/' + file)
+                tree = elementTree.parse(self.INFLOW_DIRECTORY + '/' + file)
                 root = tree.getroot()
                 ns = {'rsm': 'http://www.strom.ch'}
 
@@ -82,16 +86,20 @@ class Parser:
                     )
                     observations.append(observation)
                 consumptionvalues.Observations = observations
-                consumptionvalues.StartDateTime = datetime.strptime(metering_data_elem.find('rsm:Interval/rsm:StartDateTime', ns).text, "%Y-%m-%dT%H:%M:%SZ")
-                consumptionvalues.EndDateTime = datetime.strptime(metering_data_elem.find('rsm:Interval/rsm:EndDateTime', ns).text, "%Y-%m-%dT%H:%M:%SZ")
+                consumptionvalues.StartDateTime = datetime.strptime(
+                    metering_data_elem.find('rsm:Interval/rsm:StartDateTime', ns).text, "%Y-%m-%dT%H:%M:%SZ")
+                consumptionvalues.EndDateTime = datetime.strptime(
+                    metering_data_elem.find('rsm:Interval/rsm:EndDateTime', ns).text, "%Y-%m-%dT%H:%M:%SZ")
                 consumptionvalues.Resolution = int(metering_data_elem.find('rsm:Resolution/rsm:Resolution', ns).text)
                 consumptionvalues.Unit = metering_data_elem.find('rsm:Resolution/rsm:Unit', ns).text
 
                 if consumptionvalues.DocumentID[0].split('_')[-1] == "ID735":
-                    if not any(existing.StartDateTime == consumptionvalues.StartDateTime for existing in inflowandoutflowlist.Outflows):
+                    if not any(existing.StartDateTime == consumptionvalues.StartDateTime for existing in
+                               inflowandoutflowlist.Outflows):
                         inflowandoutflowlist.Outflows.append(consumptionvalues)
                 elif consumptionvalues.DocumentID[0].split('_')[-1] == "ID742":
-                    if not any(existing.StartDateTime == consumptionvalues.StartDateTime for existing in inflowandoutflowlist.Inflows):
+                    if not any(existing.StartDateTime == consumptionvalues.StartDateTime for existing in
+                               inflowandoutflowlist.Inflows):
                         inflowandoutflowlist.Inflows.append(consumptionvalues)
                 else:
                     continue
@@ -100,3 +108,50 @@ class Parser:
         inflowandoutflowlist.Inflows.sort(key=lambda x: x.StartDateTime)
         inflowandoutflowlist.Outflows.sort(key=lambda x: x.StartDateTime)
         return inflowandoutflowlist
+
+    def get_nearest_older_observation(self, inflows, start):
+        older_observations = [obs for obs in inflows if obs.StartDateTime <= start]
+
+        if not older_observations:
+            return None
+
+        nearest_observation = min(older_observations, key=lambda obs: start - obs.StartDateTime)
+        return nearest_observation
+
+    def find_closest_time_period(self, counterstands: List[Counterstands], end_date: datetime, obis) -> Optional[dict]:
+        closest_time_period = None
+        closest_time_diff = timedelta.max
+
+        for counterstand in counterstands:
+            for time_period in counterstand.timePeriods:
+                obis_set = {row.obis for row in time_period.valueRows}
+                if obis.issubset(obis_set):
+                    time_diff = end_date - time_period.end
+                    if time_diff >= timedelta(0) and time_diff < closest_time_diff:
+                        closest_time_diff = time_diff
+                        closest_time_period = time_period
+
+        if closest_time_period:
+            filtered_value_rows = [row for row in closest_time_period.valueRows if row.obis in obis]
+            total_value = sum(row.value for row in filtered_value_rows)
+            return {
+                "end": closest_time_period.end,
+                "total_value": total_value
+            }
+
+        return None
+
+    def getObservationsForASpecificDuraction(self, start: datetime, end: datetime, flows: []) -> list[Observation]:
+        nearest_consumption = self.get_nearest_older_observation(flows, start)
+        countofvolums = int((end - start).total_seconds() / 60 / 15)
+        volumnstoskip = int((start - nearest_consumption.StartDateTime).seconds / 60 / 15)
+        if len(nearest_consumption.Observations) - volumnstoskip >= countofvolums:
+            return nearest_consumption.Observations[volumnstoskip:(volumnstoskip + countofvolums)]
+        else:
+            return nearest_consumption.Observations[volumnstoskip:len(nearest_consumption.Observations)] + self.getObservationsForASpecificDuraction(nearest_consumption.EndDateTime, end, flows)
+
+    def getCounterStand(self, start: datetime, counterstands: List[Counterstands], flows: [], obis) -> float:
+        timeperiod = self.find_closest_time_period(counterstands, start, obis)
+        observationbetweenlastcounterstandandstartdate = self.getObservationsForASpecificDuraction(timeperiod["end"],
+                                                                                                   start, flows)
+        return timeperiod["total_value"] - sum(obs.Volume for obs in observationbetweenlastcounterstandandstartdate)
