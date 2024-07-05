@@ -1,27 +1,28 @@
 document.addEventListener("DOMContentLoaded", function () {
-    const loader = document.getElementById("loader");
-    const content = document.getElementById("content");
-    const combinedCtx = document.getElementById('combinedChart').getContext('2d');
-    const barCtx = document.getElementById('barChart').getContext('2d');
-    //const counterCtx = document.getElementById('counterChart').getContext('2d');
-    const lineCtx = document.getElementById('lineChart').getContext('2d');
-    const downloadButton = document.getElementById('downloadButton');
-    const downloadCSV = document.getElementById('downloadCSV');
-    const downloadJSON = document.getElementById('downloadJSON');
-    const daterange = document.getElementById('daterange');
-    const dropdownContent = document.querySelector('.dropdown-content');
+    const loader = document.getElementById("loader")
+    const content = document.getElementById("content")
+    const combinedCtx = document.getElementById('combinedChart').getContext('2d')
+    const barCtx = document.getElementById('barChart').getContext('2d')
+    const lineCtx = document.getElementById('lineChart').getContext('2d')
+    const pieCtx = document.getElementById('pieChart').getContext('2d');
+    const downloadButton = document.getElementById('downloadButton')
+    const downloadCSV = document.getElementById('downloadCSV')
+    const downloadJSON = document.getElementById('downloadJSON')
+    const daterange = document.getElementById('daterange')
+    const dropdownContent = document.querySelector('.dropdown-content')
 
-    const prevPageBtn = document.getElementById('prevPage');
-    const nextPageBtn = document.getElementById('nextPage');
-    const pageIndicator = document.getElementById('pageIndicator');
+    const prevPageBtn = document.getElementById('prevPage')
+    const nextPageBtn = document.getElementById('nextPage')
+    const pageIndicator = document.getElementById('pageIndicator')
 
-    let currentPage = 1;
-    const rowsPerPage = 10;
+    let currentPage = 1
+    const rowsPerPage = 10
 
-    let combinedChart = null;
-    let barChart = null;
-    let counterChart = null;
-    let lineChart = null;
+    let combinedChart = null
+    let barChart = null
+    let counterChart = null
+    let lineChart = null
+    let pieChart = null
 
     loader.style.display = "block";
 
@@ -35,7 +36,7 @@ document.addEventListener("DOMContentLoaded", function () {
             },
             opens: 'left'
         }, function (start, end, label) {
-            console.log("A new date selection was made: " + start.format('YYYY-MM-DD HH:mm') + ' to ' + end.format('YYYY-MM-DD HH:mm'));
+            //console.log("A new date selection was made: " + start.format('YYYY-MM-DD HH:mm') + ' to ' + end.format('YYYY-MM-DD HH:mm'));
             showData(start.format('DD-MM-YYYY HH:mm'), end.format('DD-MM-YYYY HH:mm'));
         });
     });
@@ -56,14 +57,6 @@ document.addEventListener("DOMContentLoaded", function () {
                     throw new Error('Network response was not ok');
                 }
                 return response.json();
-            });
-    };
-
-    const fetchData = () => {
-        return fetch('/chart/data')
-            .then(response => response.json())
-            .then(data => {
-                return data;
             });
     };
 
@@ -129,7 +122,6 @@ document.addEventListener("DOMContentLoaded", function () {
     function showData(start, end) {
         loadData(start, end)
             .then(data => {
-                console.log(data); // Debugging the loaded data
                 loader.style.display = "none";
                 content.classList.remove("hidden");
 
@@ -178,6 +170,35 @@ document.addEventListener("DOMContentLoaded", function () {
                 const compactedCombinedInflow = compactData(cumulativeInflowData, timeLabels, maxPointssum);
                 const compactedCombinedOutflow = compactData(cumulativeOutflowData, timeLabels, maxPointssum);
 
+                const pieChartData = {
+                    labels: ['Bezug (%)', 'Einspeisung (%)'],
+                    datasets: [{
+                        data: [procentInflow, procentOutflow],
+                        backgroundColor: ['rgba(75, 192, 192, 0.2)', 'rgba(153, 102, 255, 0.2)'],
+                        borderColor: ['rgba(75, 192, 192, 1)', 'rgba(153, 102, 255, 1)'],
+                        borderWidth: 1
+                    }]
+                };
+
+                const pieChartOptions = {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function (context) {
+                                    const label = context.label || '';
+                                    const value = context.raw || 0;
+                                    return `${label}: ${value}%`;
+                                }
+                            }
+                        }
+                    }
+                };
+
+
                 const combinedChartData = {
                     labels: compactedCombinedInflow.labels,
                     datasets: [
@@ -220,6 +241,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
                 if (lineChart) {
                     lineChart.destroy();
+                }
+                if (pieChart) {
+                    pieChart.destroy()
                 }
 
                 combinedChart = new Chart(combinedCtx, {
@@ -353,7 +377,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 updateAxes(combinedChart, inflowLimits, outflowLimits);
                 combinedChart.update();
 
-// Define the time blocks
+                // Define the time blocks
                 const timeBlocks = [
                     {label: '00:00 - 04:59', start: 0, end: 4},
                     {label: '05:00 - 08:59', start: 5, end: 8},
@@ -366,7 +390,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 const inflowBarData = Array(timeBlocks.length).fill(0);
                 const outflowBarData = Array(timeBlocks.length).fill(0);
 
-// Aggregate data into time blocks
+                // Aggregate data into time blocks
                 timeLabels.forEach((label, index) => {
                     const hour = moment(label).hour();
                     timeBlocks.forEach((block, blockIndex) => {
@@ -415,41 +439,6 @@ document.addEventListener("DOMContentLoaded", function () {
                         }
                     }
                 });
-
-
-                const maxPoints = 25;
-                const compactedInflow = compactData(cumulativeInflowData, timeLabels, maxPoints);
-                const compactedOutflow = compactData(cumulativeOutflowData, timeLabels, maxPoints);
-
-                const counterChartData = {
-                    labels: compactedInflow.labels,
-                    datasets: [
-                        {
-                            label: 'Zählerstand Verbrauch (kWh)',
-                            data: compactedInflow.data,
-                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                            borderColor: 'rgba(75, 192, 192, 1)',
-                            borderWidth: 1,
-                            fill: false,
-                            tension: 0.1,
-                            pointRadius: 5,
-                            pointHoverRadius: 10,
-                            yAxisID: 'y'
-                        },
-                        {
-                            label: 'Zählerstand Einspeisung (kWh)',
-                            data: compactedOutflow.data,
-                            backgroundColor: 'rgba(153, 102, 255, 0.2)',
-                            borderColor: 'rgba(153, 102, 255, 1)',
-                            borderWidth: 1,
-                            fill: false,
-                            tension: 0.1,
-                            pointRadius: 5,
-                            pointHoverRadius: 10,
-                            yAxisID: 'y'
-                        }
-                    ]
-                }
 
 
                 const maxPointsLine = 75;
@@ -525,16 +514,18 @@ document.addEventListener("DOMContentLoaded", function () {
                     }
                 });
 
+                pieChart = new Chart(pieCtx, {
+                    type: 'doughnut',
+                    data: pieChartData,
+                    options: pieChartOptions
+                });
+
                 const total_inflow = document.getElementById('total-inflow-value');
                 const total_outflow = document.getElementById('total-outflow-value');
-                const average_inflow = document.getElementById('average-inflow');
-                const average_outflow = document.getElementById('average-outflow');
                 const time_difference = document.getElementById('time-differnce-value');
 
                 total_inflow.innerText = `${totalInflow} kWh`;
                 total_outflow.innerText = `${totalOutflow} kWh`;
-                average_inflow.innerText = `${procentInflow} %`;
-                average_outflow.innerText = `${procentOutflow} %`;
 
                 // Assuming startMoment and endMoment are DateTime values
                 const startMoment = moment(data.startdatetime);
