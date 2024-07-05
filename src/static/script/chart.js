@@ -52,7 +52,7 @@ document.addEventListener("DOMContentLoaded", function() {
         return fetch(url)
             .then(response => {
                 if (!response.ok) {
-                    alert('Unfournately we dont have date for this period. Please select another period.');
+                    alert('Leider haben wir keine Daten für diesen Zeitraum. Bitte wählen Sie einen anderen Zeitraum.');
                     throw new Error('Network response was not ok');
                 }
                 return response.json();
