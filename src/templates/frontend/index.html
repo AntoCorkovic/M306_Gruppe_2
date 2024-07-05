@@ -6,6 +6,7 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -16,21 +17,42 @@
             justify-content: center;
             height: 100vh;
             margin: 0;
-            overflow: hidden; /* Hide scrollbars on body */
         }
         .container {
+            display: flex;
             width: 90%;
             max-width: 1200px;
-            margin: 20px;
-            padding: 20px;
+            gap: 20px;
+        }
+        .left-panel {
+            flex: 2; /* Use two-thirds of the width */
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .right-panel {
+            flex: 1; /* Use one-third of the width */
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .block {
             background: white;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
             border-radius: 8px;
-            overflow: hidden; /* Hide scrollbars in container */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         .swiper-container {
             width: 100%;
-            height: 500px; /* Set a fixed height to prevent stretching */
+            height: 400px; /* Fixed height for the chart */
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
         .swiper-slide {
             display: flex;
@@ -51,58 +73,82 @@
             width: 100% !important;
             height: auto !important;
         }
-        .swiper-button-prev, .swiper-button-next {
-            color: #000; /* Set the arrow color */
-            background: rgba(255, 255, 255, 0.8); /* Background for better visibility */
-            border-radius: 50%;
-            padding: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            width: 40px;
-            height: 40px;
+        .swiper-pagination {
+            position: relative;
+            bottom: 10px;
             display: flex;
             justify-content: center;
-            align-items: center;
+            gap: 10px;
         }
-        .swiper-button-prev:hover, .swiper-button-next:hover {
-            background: rgba(255, 255, 255, 1); /* Fully opaque background on hover */
+        .datepicker-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            display: none;
+            z-index: 1000;
         }
-        .swiper-button-prev:after, .swiper-button-next:after {
-            font-family: 'Font Awesome 5 Free';
-            font-weight: 900;
-            font-size: 1.5rem;
+        .datepicker-popup.active {
+            display: block;
         }
-        .swiper-button-prev:after {
-            content: '\f104'; /* Font Awesome left arrow */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            z-index: 999;
         }
-        .swiper-button-next:after {
-            content: '\f105'; /* Font Awesome right arrow */
+        .overlay.active {
+            display: block;
         }
     </style>
 </head>
 <body>
+    <div class="overlay" id="overlay"></div>
     <div class="container">
-        <h1 class="text-2xl font-bold mb-4">Energy Consumption and Inflow</h1>
-        <div class="swiper-container">
-            <div class="swiper-wrapper">
-                <div class="swiper-slide swiper-slide-visible">
-                    <div class="chart-container">
-                        <canvas id="consumptionChart"></canvas>
+        <div class="left-panel">
+            <h1 class="text-2xl font-bold mb-4">Energy Consumption and Inflow</h1>
+            <button id="openPopup" class="bg-blue-500 text-white py-2 px-4 rounded self-end mb-4">Select Date Range</button>
+            <div class="swiper-container">
+                <div class="swiper-wrapper">
+                    <div class="swiper-slide swiper-slide-visible">
+                        <div class="chart-container">
+                            <canvas id="consumptionChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="swiper-slide">
+                        <div class="chart-container">
+                            <canvas id="inflowChart"></canvas>
+                        </div>
                     </div>
                 </div>
-                <div class="swiper-slide">
-                    <div class="chart-container">
-                        <canvas id="inflowChart"></canvas>
-                    </div>
-                </div>
+                <div class="swiper-pagination"></div>
             </div>
-            <div class="swiper-pagination"></div>
-            <div class="swiper-button-prev"></div>
-            <div class="swiper-button-next"></div>
         </div>
+        <div class="right-panel">
+            <div class="block">Impressions</div>
+            <div class="block">Goal</div>
+            <div class="block">Impact</div>
+        </div>
+    </div>
+
+    <!-- Datepicker Popup -->
+    <div id="datepickerPopup" class="datepicker-popup">
+        <h2 class="text-xl font-bold mb-4">Select Date Range</h2>
+        <input type="text" id="datePicker" />
+        <button id="closePopup" class="mt-4 bg-blue-500 text-white py-2 px-4 rounded">Close</button>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script>
         const consumptionCtx = document.getElementById('consumptionChart').getContext('2d');
         const inflowCtx = document.getElementById('inflowChart').getContext('2d');
@@ -210,10 +256,6 @@
 
         // Initialize Swiper
         const swiper = new Swiper('.swiper-container', {
-            navigation: {
-                nextEl: '.swiper-button-next',
-                prevEl: '.swiper-button-prev',
-            },
             pagination: {
                 el: '.swiper-pagination',
                 clickable: true,
@@ -242,7 +284,29 @@
                 slide.classList.remove('swiper-slide-visible');
             }
         });
+
+        // Datepicker Popup Logic
+        const openPopup = document.getElementById('openPopup');
+        const closePopup = document.getElementById('closePopup');
+        const datepickerPopup = document.getElementById('datepickerPopup');
+        const overlay = document.getElementById('overlay');
+
+        openPopup.addEventListener('click', () => {
+            datepickerPopup.classList.add('active');
+            overlay.classList.add('active');
+        });
+
+        closePopup.addEventListener('click', () => {
+            datepickerPopup.classList.remove('active');
+            overlay.classList.remove('active');
+        });
+
+        // Initialize Flatpickr
+        flatpickr("#datePicker", {
+            mode: "range",
+            dateFormat: "Y-m-d",
+            defaultDate: ["2024-01-01", "2024-01-15"]
+        });
     </script>
 </body>
 </html>
-
