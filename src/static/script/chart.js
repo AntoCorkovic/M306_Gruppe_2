@@ -52,6 +52,7 @@ document.addEventListener("DOMContentLoaded", function () {
         return fetch(url)
             .then(response => {
                 if (!response.ok) {
+                    alert('Leider haben wir keine Daten für diesen Zeitraum. Bitte wählen Sie einen anderen Zeitraum.');
                     throw new Error('Network response was not ok');
                 }
                 return response.json();
@@ -328,10 +329,12 @@ document.addEventListener("DOMContentLoaded", function () {
                                 zoom: {
                                     wheel: {
                                         enabled: true, // Enable zooming with the mouse wheel
+                                        modifierKey: 'ctrl',
                                     },
                                     pinch: {
                                         enabled: true // Enable zooming with pinch gestures
                                     },
+
                                     mode: 'xy' // Allow zooming on both axes
                                 },
                                 pan: {
@@ -473,6 +476,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                 zoom: {
                                     wheel: {
                                         enabled: true, // Enable zooming with the mouse wheel
+                                        modifierKey: 'ctrl',
                                     },
                                     pinch: {
                                         enabled: true // Enable zooming with pinch gestures
@@ -546,6 +550,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                 zoom: {
                                     wheel: {
                                         enabled: true, // Enable zooming with the mouse wheel
+                                        modifierKey: 'ctrl',
                                     },
                                     pinch: {
                                         enabled: true // Enable zooming with pinch gestures
