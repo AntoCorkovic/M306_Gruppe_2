@@ -118,10 +118,9 @@ document.addEventListener("DOMContentLoaded", function () {
     };
 
     const updateAxes = (chart, inflowLimits, outflowLimits) => {
-        chart.options.scales.y.min = inflowLimits.min;
-        chart.options.scales.y.max = inflowLimits.max;
-        chart.options.scales.y1.min = outflowLimits.min;
-        chart.options.scales.y1.max = outflowLimits.max;
+        chart.options.scales.y.min = outflowLimits.min -2000;
+        chart.options.scales.y.max = inflowLimits.max + 2000;
+
     };
 
     showData("01-01-2019 00:00", "02-01-2019 23:00");
@@ -189,9 +188,8 @@ document.addEventListener("DOMContentLoaded", function () {
                             borderWidth: 1,
                             fill: false,
                             tension: 0.1,
-                            pointRadius: 5,
+                            pointRadius: 0,
                             pointHoverRadius: 10,
-                            yAxisID: 'y'
                         },
                         {
                             label: 'Einspeisung (kWh)',
@@ -201,9 +199,8 @@ document.addEventListener("DOMContentLoaded", function () {
                             borderWidth: 1,
                             fill: false,
                             tension: 0.1,
-                            pointRadius: 5,
+                            pointRadius: 0,
                             pointHoverRadius: 10,
-                            yAxisID: 'y1'
                         }
                     ]
                 };
@@ -257,20 +254,10 @@ document.addEventListener("DOMContentLoaded", function () {
                                 position: 'left',
                                 title: {
                                     display: true,
-                                    text: 'Bezug (kWh)'
+                                    text: 'Bezug / Einspeisung (kWh)'
                                 }
                             },
-                            y1: {
-                                type: 'linear',
-                                position: 'right',
-                                title: {
-                                    display: true,
-                                    text: 'Einspeisung (kWh)'
-                                },
-                                grid: {
-                                    drawOnChartArea: false
-                                }
-                            }
+
                         },
                         interaction: {
                             mode: 'index',
@@ -342,7 +329,25 @@ document.addEventListener("DOMContentLoaded", function () {
                                     mode: 'xy' // Allow panning on both axes
                                 }
                             }
-                        }
+                        },
+                        elements: {
+            point: {
+                radius: 0, // Remove the visualized points
+                hoverRadius: 10 // Significantly increase hover radius
+            }
+        },
+        interaction: {
+            mode: 'nearest', // Display tooltip for the nearest point
+            axis: 'x', // Only consider x-axis for nearest mode
+            intersect: false // Trigger tooltip even when not intersecting a point
+        },
+        plugins: {
+            tooltip: {
+                enabled: true,
+                mode: 'nearest',
+                intersect: false // Ensure tooltips are shown when hovering near points
+            }
+        }
                     }
                 });
 
