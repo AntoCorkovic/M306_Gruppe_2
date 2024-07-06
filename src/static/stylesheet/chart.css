@@ -1,4 +1,4 @@
-/* chart (1).css */
+/* chart.css */
 
 /* Farbvariablen */
 :root {
@@ -8,7 +8,7 @@
     --text-color: #333;
     --box-shadow-color: rgba(0, 0, 0, 0.1);
     --gold-color: #FFD700; /* Goldene Farbe */
-    --purple-color: #800080; /* Lila Farbe */
+    --purple-color: #9370DB; /* Lila Farbe */
 }
 
 body {
@@ -44,6 +44,7 @@ body {
 .main-content {
     flex: 1;
     margin-right: 20px;
+    margin-top: 0 !important;
 }
 
 .chart-container {
@@ -58,8 +59,7 @@ body {
     border-radius: 8px;
     padding: 20px;
     box-sizing: border-box; /* Padding in Breitenberechnung einbeziehen */
-    margin-top: 0; /* Kein Abstand nach oben */
-    margin-bottom: 20px; /* Abstand nach unten hinzufügen */
+    margin-top: 20px; /* Kein Abstand nach oben */
 }
 
 .bar-chart-container {
@@ -104,16 +104,16 @@ canvas {
 }
 
 #loader {
-    border: 16px solid #f3f3f3;
+    border: 10px solid lightgrey;
     border-radius: 50%;
-    border-top: 16px solid var(--primary-color);
-    width: 120px;
-    height: 120px;
+    border-top: 10px solid var(--purple-color);
+    width: 40px;
+    height: 40px;
     animation: spin 2s linear infinite;
     position: absolute;
     transform: translate(-50%, -50%);
-    margin: auto;
     padding: 10px;
+    margin: 15% auto auto;
 }
 
 @keyframes spin {
@@ -166,10 +166,25 @@ canvas {
     border-radius: 5px;
     cursor: pointer;
     font-size: 16px;
-    margin-left: 0; /* Entferne Margin links, um Breite korrekt zu berechnen */
+    margin-left: 15px; /* Füge Margin links hinzu */
     display: flex;
     align-items: center;
     position: relative; /* Ensures dropdown-content aligns with button */
+    transition: background-color 0.3s ease;
+}
+
+.download-button {
+    background-color: var(--background-color); /* Hintergrundfarbe des Buttons */
+    color: var(--text-color); /* Textfarbe anpassen */
+    border: none;
+    padding: 10px 20px;
+    margin: 0; /* Entferne margin-right */
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    transition: background-color 0.3s ease;
 }
 
 .header-button .dropdown-icon,
@@ -182,7 +197,32 @@ canvas {
 }
 
 .header-button:hover {
-    background-color: #0056b3; /* Hover-Farbe */
+    background-color: var(--purple-color); /* Hover-Farbe */
+    color: #fff; /* Textfarbe beim Hover */
+}
+
+.header-button:hover .dropdown-icon,
+.header-button:hover .dropdown-icon i {
+    color: #fff; /* Textfarbe für das Icon beim Hover */
+}
+
+body.dark-mode .header-button:hover {
+    background-color: var(--purple-color); /* Hover-Farbe im Darkmode */
+    color: #fff; /* Textfarbe im Hover Darkmode */
+}
+
+body.dark-mode .header-button:hover .dropdown-icon,
+body.dark-mode .header-button:hover .dropdown-icon i {
+    color: #fff; /* Textfarbe für das Icon beim Hover im Darkmode */
+}
+
+.dark-mode-icon {
+    width: 20px;
+    height: 20px;
+}
+
+body.dark-mode .dark-mode-icon {
+    content: url('https://cdn-icons-png.flaticon.com/512/1823/1823324.png'); /* Icon for dark mode */
 }
 
 .daterange-container {
@@ -364,24 +404,10 @@ canvas {
 }
 
 /* Reusing the style of header-button for download-button */
-.download-button {
-    background-color: var(--background-color); /* Hintergrundfarbe des Buttons */
-    color: var(--text-color); /* Textfarbe anpassen */
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-    display: flex;
-    align-items: center;
-}
-
-.download-button .download-icon {
-    color: var(--text-color); /* Textfarbe für Icons */
-}
-
-.download-button:hover {
-    background-color: #0056b3; /* Hover-Farbe */
+.download-button:hover,
+.download-button:hover .dropdown-icon,
+.download-button:hover .dropdown-icon i {
+    color: #fff; /* Textfarbe beim Hover */
 }
 
 .pagination {
@@ -403,7 +429,7 @@ canvas {
 }
 
 .page-btn:hover {
-    background-color: #0056b3;
+    background-color: var(--purple-color); /* Hover-Farbe */
 }
 
 #pageIndicator {
@@ -438,7 +464,13 @@ body.dark-mode .header-button .download-icon {
 }
 
 body.dark-mode .header-button:hover {
-    background-color: #0056b3; /* Hover-Farbe */
+    background-color: var(--purple-color); /* Hover-Farbe im Darkmode */
+    color: #fff; /* Textfarbe im Hover Darkmode */
+}
+
+body.dark-mode .header-button:hover .dropdown-icon,
+body.dark-mode .header-button:hover .dropdown-icon i {
+    color: #fff; /* Textfarbe für das Icon beim Hover im Darkmode */
 }
 
 body.dark-mode .download-button {
@@ -451,8 +483,10 @@ body.dark-mode .download-button .download-icon {
     color: var(--text-color); /* Textfarbe für Icons */
 }
 
-body.dark-mode .download-button:hover {
-    background-color: #0056b3; /* Hover-Farbe */
+body.dark-mode .download-button:hover,
+body.dark-mode .download-button:hover .dropdown-icon,
+body.dark-mode .download-button:hover .dropdown-icon i {
+    color: #fff; /* Textfarbe im Hover Darkmode */
 }
 
 body.dark-mode .dropdown-content a {
@@ -461,4 +495,9 @@ body.dark-mode .dropdown-content a {
 
 body.dark-mode .dropdown-content a .download-icon {
     color: black; /* Textfarbe für Icons */
+}
+
+.header-button .fa-sun,
+.header-button .fa-moon {
+    font-size: 1.2em; /* Adjust icon size as needed */
 }

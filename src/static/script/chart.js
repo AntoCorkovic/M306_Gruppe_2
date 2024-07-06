@@ -1,27 +1,24 @@
 document.addEventListener("DOMContentLoaded", function () {
+
     const loader = document.getElementById("loader");
     const content = document.getElementById("content");
     const combinedCtx = document.getElementById('combinedChart').getContext('2d');
     const barCtx = document.getElementById('barChart').getContext('2d');
-    const counterCtx = document.getElementById('counterChart').getContext('2d');
     const lineCtx = document.getElementById('lineChart').getContext('2d');
     const downloadButton = document.getElementById('downloadButton');
     const downloadCSV = document.getElementById('downloadCSV');
     const downloadJSON = document.getElementById('downloadJSON');
-    const daterange = document.getElementById('daterange');
     const dropdownContent = document.querySelector('.dropdown-content');
+    const darkModeToggle = document.getElementById('darkModeToggle');
+    const pieCtx = document.getElementById('pieChart').getContext('2d');
 
-    const prevPageBtn = document.getElementById('prevPage');
-    const nextPageBtn = document.getElementById('nextPage');
-    const pageIndicator = document.getElementById('pageIndicator');
-
-    let currentPage = 1;
-    const rowsPerPage = 10;
 
     let combinedChart = null;
     let barChart = null;
     let counterChart = null;
     let lineChart = null;
+    let pieChart = null
+
 
     loader.style.display = "block";
 
@@ -34,9 +31,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 format: 'DD-MM-YYYY HH:mm'
             },
             opens: 'left'
-        }, function (start, end, label) {;
-            console.log("A new date selection was made: " + start.format('YYYY-MM-DD HH:mm') + ' to ' + end.format('YYYY-MM-DD HH:mm'));
-            showData(start.format('DD-MM-YYYY HH:mm'), end.format('DD-MM-YYYY HH:mm'))
+        }, function (start, end, label) {
+            //console.log("A new date selection was made: " + start.format('YYYY-MM-DD HH:mm') + ' to ' + end.format('YYYY-MM-DD HH:mm'));
+            showData(start.format('DD-MM-YYYY HH:mm'), end.format('DD-MM-YYYY HH:mm'));
+
         });
     });
 
@@ -56,14 +54,6 @@ document.addEventListener("DOMContentLoaded", function () {
                     throw new Error('Network response was not ok');
                 }
                 return response.json();
-            });
-    };
-
-    const fetchData = () => {
-        return fetch('/chart/data')
-            .then(response => response.json())
-            .then(data => {
-                return data;
             });
     };
 
@@ -128,7 +118,6 @@ document.addEventListener("DOMContentLoaded", function () {
     function showData(start, end) {
         loadData(start, end)
             .then(data => {
-                console.log(data); // Debugging the loaded data
                 loader.style.display = "none";
                 content.classList.remove("hidden");
 
@@ -177,6 +166,38 @@ document.addEventListener("DOMContentLoaded", function () {
                 const compactedCombinedInflow = compactData(cumulativeInflowData, timeLabels, maxPointssum);
                 const compactedCombinedOutflow = compactData(cumulativeOutflowData, timeLabels, maxPointssum);
 
+                const pieChartData = {
+                    labels: ['Bezug (%)', 'Einspeisung (%)'],
+                    datasets: [{
+                        data: [procentInflow, procentOutflow],
+                        backgroundColor: ['rgba(75, 192, 192, 0.2)', 'rgba(153, 102, 255, 0.2)'],
+                        borderColor: ['rgba(75, 192, 192, 1)', 'rgba(153, 102, 255, 1)'],
+                        borderWidth: 1
+                    }]
+                };
+
+                const pieChartOptions = {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                title: function() {
+                                    return '';
+                                },
+                                label: function (context) {
+                                    const label = context.label || '';
+                                    const value = context.raw || 0;
+                                    return `${label}: ${value}%`;
+                                }
+                            }
+                        }
+                    }
+                };
+
+
                 const combinedChartData = {
                     labels: compactedCombinedInflow.labels,
                     datasets: [
@@ -217,6 +238,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
                 if (lineChart) {
                     lineChart.destroy();
+                }
+                if (pieChart) {
+                    pieChart.destroy()
                 }
 
                 combinedChart = new Chart(combinedCtx, {
@@ -367,8 +391,10 @@ const timeBlocks = [
     { label: '21:00 - 23:59', start: 21, end: 23 }
 ];
 
+
 const inflowBarData = Array(timeBlocks.length).fill(0);
 const outflowBarData = Array(timeBlocks.length).fill(0);
+
 
 // Aggregate data into time blocks
 timeLabels.forEach((label, index) => {
@@ -380,6 +406,7 @@ timeLabels.forEach((label, index) => {
         }
     });
 });
+
 
 const barLabels = timeBlocks.map(block => block.label);
 
@@ -421,85 +448,9 @@ barChart = new Chart(barCtx, {
 });
 
 
-                const maxPoints = 25;
-                const compactedInflow = compactData(cumulativeInflowData, timeLabels, maxPoints);
-                const compactedOutflow = compactData(cumulativeOutflowData, timeLabels, maxPoints);
-
-                const counterChartData = {
-                    labels: compactedInflow.labels,
-                    datasets: [
-                        {
-                            label: 'Zählerstand Verbrauch (kWh)',
-                            data: compactedInflow.data,
-                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                            borderColor: 'rgba(75, 192, 192, 1)',
-                            borderWidth: 1,
-                            fill: false,
-                            tension: 0.1,
-                            pointRadius: 5,
-                            pointHoverRadius: 10,
-                            yAxisID: 'y'
-                        },
-                        {
-                            label: 'Zählerstand Einspeisung (kWh)',
-                            data: compactedOutflow.data,
-                            backgroundColor: 'rgba(153, 102, 255, 0.2)',
-                            borderColor: 'rgba(153, 102, 255, 1)',
-                            borderWidth: 1,
-                            fill: false,
-                            tension: 0.1,
-                            pointRadius: 5,
-                            pointHoverRadius: 10,
-                            yAxisID: 'y'
-                        }
-                    ]
-                };
-
-                counterChart = new Chart(counterCtx, {
-                    type: 'bar',
-                    data: counterChartData,
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        scales: {
-                            x: {
-                                type: 'category'
-                            },
-                            y: {
-                                type: 'linear',
-                                position: 'left',
-                                title: {
-                                    display: true,
-                                    text: 'Zählerstände Verbrauch / Einspeisung (kWh)'
-                                }
-                            },
-
-                        },
-                        plugins: {
-                            zoom: {
-                                zoom: {
-                                    wheel: {
-                                        enabled: true, // Enable zooming with the mouse wheel
-                                        modifierKey: 'ctrl',
-                                    },
-                                    pinch: {
-                                        enabled: true // Enable zooming with pinch gestures
-                                    },
-                                    mode: 'xy' // Allow zooming on both axes
-                                },
-                                pan: {
-                                    enabled: true,
-                                    mode: 'xy' // Allow panning on both axes
-                                }
-                            }
-                        }
-                    }
-                });
-
-
-                const maxPointsline = 75;
-                const compactedInflowLine = compactData(inflowData, timeLabels, maxPointsline);
-                const compactedOutflowLine = compactData(outflowData, timeLabels, maxPointsline);
+                const maxPointsLine = 75;
+                const compactedInflowLine = compactData(inflowData, timeLabels, maxPointsLine);
+                const compactedOutflowLine = compactData(outflowData, timeLabels, maxPointsLine);
 
                 const lineChartData = {
     labels: compactedInflowLine.labels,
@@ -590,29 +541,31 @@ lineChart = new Chart(lineCtx, {
 
 
 
+                pieChart = new Chart(pieCtx, {
+                    type: 'doughnut',
+                    data: pieChartData,
+                    options: pieChartOptions
+                });
+
                 const total_inflow = document.getElementById('total-inflow-value');
                 const total_outflow = document.getElementById('total-outflow-value');
-                const average_inflow = document.getElementById('average-inflow');
-                const average_outflow = document.getElementById('average-outflow');
                 const time_difference = document.getElementById('time-differnce-value');
 
                 total_inflow.innerText = `${totalInflow} kWh`;
                 total_outflow.innerText = `${totalOutflow} kWh`;
-                average_inflow.innerText = `${procentInflow} %`;
-                average_outflow.innerText = `${procentOutflow} %`;
 
                 // Assuming startMoment and endMoment are DateTime values
                 const startMoment = moment(data.startdatetime);
                 const endMoment = moment(data.enddatetime);
 
-// Calculate the total duration
+                // Calculate the total duration
                 const duration = moment.duration(endMoment.diff(startMoment));
 
-// Calculate the total days and remaining hours
+                // Calculate the total days and remaining hours
                 const totalDays = Math.floor(duration.asDays());
                 const remainingHours = duration.hours(); // Get the remaining hours after extracting days
 
-// Display the time difference
+                // Display the time difference
                 time_difference.innerText = `${totalDays} d ${remainingHours} h`;
 
             })
@@ -620,13 +573,17 @@ lineChart = new Chart(lineCtx, {
                 loader.style.display = "none";
                 console.error('Error fetching data:', error);
             });
-        document.addEventListener('keydown', (event) => {
-        if (event.ctrlKey && event.key === 'd') {
-            event.preventDefault();
-            document.body.classList.toggle('dark-mode');
+    }
+
+    darkModeToggle.addEventListener('click', () => {
+        document.body.classList.toggle('dark-mode');
+        const icon = darkModeToggle.querySelector('img');
+        if (document.body.classList.contains('dark-mode')) {
+            icon.src = 'https://cdn-icons-png.flaticon.com/512/1823/1823324.png';
+            icon.alt = 'Dark Mode Icon';
+        } else {
+            icon.src = 'https://cdn-icons-png.flaticon.com/512/439/439842.png';
+            icon.alt = 'Light Mode Icon';
         }
     });
-    }
 });
-
-
