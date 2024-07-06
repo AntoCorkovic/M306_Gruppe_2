@@ -10,10 +10,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const downloadJSON = document.getElementById('downloadJSON');
     const daterange = document.getElementById('daterange');
     const dropdownContent = document.querySelector('.dropdown-content');
-
-    const prevPageBtn = document.getElementById('prevPage');
-    const nextPageBtn = document.getElementById('nextPage');
-    const pageIndicator = document.getElementById('pageIndicator');
+    const darkModeToggle = document.getElementById('darkModeToggle');
 
     let currentPage = 1;
     const rowsPerPage = 10;
@@ -596,13 +593,17 @@ document.addEventListener("DOMContentLoaded", function () {
                 loader.style.display = "none";
                 console.error('Error fetching data:', error);
             });
-        document.addEventListener('keydown', (event) => {
-        if (event.ctrlKey && event.key === 'd') {
-            event.preventDefault();
-            document.body.classList.toggle('dark-mode');
+    }
+
+    darkModeToggle.addEventListener('click', () => {
+        document.body.classList.toggle('dark-mode');
+        const icon = darkModeToggle.querySelector('img');
+        if (document.body.classList.contains('dark-mode')) {
+            icon.src = 'https://cdn-icons-png.flaticon.com/512/1823/1823324.png';
+            icon.alt = 'Dark Mode Icon';
+        } else {
+            icon.src = 'https://cdn-icons-png.flaticon.com/512/439/439842.png';
+            icon.alt = 'Light Mode Icon';
         }
     });
-    }
 });
-
-
