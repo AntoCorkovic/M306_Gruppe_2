@@ -43,14 +43,14 @@ def chart_data():
     startdatetime = datetime.strptime(startdatetime_str, '%d-%m-%Y %H:%M')
     enddatetime = datetime.strptime(enddatetime_str, '%d-%m-%Y %H:%M')
 
-    inflow_observations = parser.getObservationsForASpecificDuraction(startdatetime, enddatetime,
-                                                                      consumptionvalues.Inflows)
-    outflow_observations = parser.getObservationsForASpecificDuraction(startdatetime, enddatetime,
-                                                                       consumptionvalues.Outflows)
-    counterstand_of_inflow_at_start = parser.getCounterStand(startdatetime, counterstands, consumptionvalues.Inflows,
-                                                             {"1-1:1.8.1", "1-1:1.8.2"})
-    counterstand_of_outflow_at_start = parser.getCounterStand(startdatetime, counterstands, consumptionvalues.Outflows,
-                                                              {"1-1:2.8.1", "1-1:2.8.2"})
+    inflow_observations = parser.get_observations_for_specific_duration(startdatetime, enddatetime,
+                                                                        consumptionvalues.Inflows)
+    outflow_observations = parser.get_observations_for_specific_duration(startdatetime, enddatetime,
+                                                                         consumptionvalues.Outflows)
+    counterstand_of_inflow_at_start = parser.get_counter_stand(startdatetime, counterstands, consumptionvalues.Inflows,
+                                                               {"1-1:1.8.1", "1-1:1.8.2"})
+    counterstand_of_outflow_at_start = parser.get_counter_stand(startdatetime, counterstands, consumptionvalues.Outflows,
+                                                                {"1-1:2.8.1", "1-1:2.8.2"})
 
     inflow_data = [obs.Volume for obs in inflow_observations]
     outflow_data = [obs.Volume for obs in outflow_observations]

@@ -104,16 +104,16 @@ canvas {
 }
 
 #loader {
-    border: 16px solid lightgrey;
+    border: 10px solid lightgrey;
     border-radius: 50%;
-    border-top: 16px solid var(--purple-color);
-    width: 120px;
-    height: 120px;
+    border-top: 10px solid var(--purple-color);
+    width: 40px;
+    height: 40px;
     animation: spin 2s linear infinite;
     position: absolute;
     transform: translate(-50%, -50%);
     padding: 10px;
-    margin: 10% auto auto;
+    margin: 15% auto auto;
 }
 
 @keyframes spin {
