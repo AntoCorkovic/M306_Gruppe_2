@@ -44,6 +44,7 @@ body {
 .main-content {
     flex: 1;
     margin-right: 20px;
+    margin-top: 0 !important;
 }
 
 .chart-container {
@@ -58,8 +59,7 @@ body {
     border-radius: 8px;
     padding: 20px;
     box-sizing: border-box; /* Padding in Breitenberechnung einbeziehen */
-    margin-top: 0; /* Kein Abstand nach oben */
-    margin-bottom: 20px; /* Abstand nach unten hinzufügen */
+    margin-top: 20px; /* Kein Abstand nach oben */
 }
 
 .bar-chart-container {
@@ -104,16 +104,16 @@ canvas {
 }
 
 #loader {
-    border: 16px solid #f3f3f3;
+    border: 10px solid lightgrey;
     border-radius: 50%;
-    border-top: 16px solid var(--primary-color);
-    width: 120px;
-    height: 120px;
+    border-top: 10px solid var(--purple-color);
+    width: 40px;
+    height: 40px;
     animation: spin 2s linear infinite;
     position: absolute;
     transform: translate(-50%, -50%);
-    margin: auto;
     padding: 10px;
+    margin: 15% auto auto;
 }
 
 @keyframes spin {
