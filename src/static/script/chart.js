@@ -1,28 +1,31 @@
 document.addEventListener("DOMContentLoaded", function () {
-    const loader = document.getElementById("loader")
-    const content = document.getElementById("content")
-    const combinedCtx = document.getElementById('combinedChart').getContext('2d')
-    const barCtx = document.getElementById('barChart').getContext('2d')
-    const lineCtx = document.getElementById('lineChart').getContext('2d')
-    const pieCtx = document.getElementById('pieChart').getContext('2d');
-    const downloadButton = document.getElementById('downloadButton')
-    const downloadCSV = document.getElementById('downloadCSV')
-    const downloadJSON = document.getElementById('downloadJSON')
-    const daterange = document.getElementById('daterange')
-    const dropdownContent = document.querySelector('.dropdown-content')
 
+    const loader = document.getElementById("loader");
+    const content = document.getElementById("content");
+    const combinedCtx = document.getElementById('combinedChart').getContext('2d');
+    const barCtx = document.getElementById('barChart').getContext('2d');
+    const lineCtx = document.getElementById('lineChart').getContext('2d');
+    const downloadButton = document.getElementById('downloadButton');
+    const downloadCSV = document.getElementById('downloadCSV');
+    const downloadJSON = document.getElementById('downloadJSON');
+    const daterange = document.getElementById('daterange');
+    const dropdownContent = document.querySelector('.dropdown-content');
+    const darkModeToggle = document.getElementById('darkModeToggle');
+    const pieCtx = document.getElementById('pieChart').getContext('2d');
+  
     const prevPageBtn = document.getElementById('prevPage')
     const nextPageBtn = document.getElementById('nextPage')
-    const pageIndicator = document.getElementById('pageIndicator')
+    const pageIndicator = document.getElementById('pageIndicator')  
 
-    let currentPage = 1
-    const rowsPerPage = 10
+    let currentPage = 1;
+    const rowsPerPage = 10;
 
-    let combinedChart = null
-    let barChart = null
-    let counterChart = null
-    let lineChart = null
+    let combinedChart = null;
+    let barChart = null;
+    let counterChart = null;
+    let lineChart = null;
     let pieChart = null
+
 
     loader.style.display = "block";
 
@@ -546,11 +549,17 @@ document.addEventListener("DOMContentLoaded", function () {
                 loader.style.display = "none";
                 console.error('Error fetching data:', error);
             });
-        document.addEventListener('keydown', (event) => {
-        if (event.ctrlKey && event.key === 'd') {
-            event.preventDefault();
-            document.body.classList.toggle('dark-mode')
-        }
-    })
     }
-})
+
+    darkModeToggle.addEventListener('click', () => {
+        document.body.classList.toggle('dark-mode');
+        const icon = darkModeToggle.querySelector('img');
+        if (document.body.classList.contains('dark-mode')) {
+            icon.src = 'https://cdn-icons-png.flaticon.com/512/1823/1823324.png';
+            icon.alt = 'Dark Mode Icon';
+        } else {
+            icon.src = 'https://cdn-icons-png.flaticon.com/512/439/439842.png';
+            icon.alt = 'Light Mode Icon';
+        }
+    });
+});
