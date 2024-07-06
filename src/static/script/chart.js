@@ -8,17 +8,10 @@ document.addEventListener("DOMContentLoaded", function () {
     const downloadButton = document.getElementById('downloadButton');
     const downloadCSV = document.getElementById('downloadCSV');
     const downloadJSON = document.getElementById('downloadJSON');
-    const daterange = document.getElementById('daterange');
     const dropdownContent = document.querySelector('.dropdown-content');
     const darkModeToggle = document.getElementById('darkModeToggle');
     const pieCtx = document.getElementById('pieChart').getContext('2d');
-  
-    const prevPageBtn = document.getElementById('prevPage')
-    const nextPageBtn = document.getElementById('nextPage')
-    const pageIndicator = document.getElementById('pageIndicator')  
 
-    let currentPage = 1;
-    const rowsPerPage = 10;
 
     let combinedChart = null;
     let barChart = null;
@@ -187,10 +180,13 @@ document.addEventListener("DOMContentLoaded", function () {
                     responsive: true,
                     plugins: {
                         legend: {
-                            position: 'top'
+                            display: false
                         },
                         tooltip: {
                             callbacks: {
+                                title: function() {
+                                    return '';
+                                },
                                 label: function (context) {
                                     const label = context.label || '';
                                     const value = context.raw || 0;
