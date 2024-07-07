@@ -301,6 +301,9 @@ document.addEventListener("DOMContentLoaded", function () {
                                 }
                             },
                             tooltip: {
+                                enabled: true,
+                                mode: 'nearest',
+                                intersect: false, // Ensure tooltips are shown when hovering near points
                                 callbacks: {
                                     label: function (context) {
                                         let label = context.dataset.label || '';
@@ -331,23 +334,16 @@ document.addEventListener("DOMContentLoaded", function () {
                             }
                         },
                         elements: {
-            point: {
-                radius: 0, // Remove the visualized points
-                hoverRadius: 10 // Significantly increase hover radius
-            }
-        },
-        interaction: {
-            mode: 'nearest', // Display tooltip for the nearest point
-            axis: 'x', // Only consider x-axis for nearest mode
-            intersect: false // Trigger tooltip even when not intersecting a point
-        },
-        plugins: {
-            tooltip: {
-                enabled: true,
-                mode: 'nearest',
-                intersect: false // Ensure tooltips are shown when hovering near points
-            }
-        }
+                            point: {
+                                radius: 0, // Remove the visualized points
+                                hoverRadius: 10 // Significantly increase hover radius
+                            }
+                        },
+                        interaction: {
+                            mode: 'nearest', // Display tooltip for the nearest point
+                            axis: 'x', // Only consider x-axis for nearest mode
+                            intersect: false // Trigger tooltip even when not intersecting a point
+                        }
                     }
                 });
 
@@ -358,70 +354,70 @@ document.addEventListener("DOMContentLoaded", function () {
                 updateAxes(combinedChart, inflowLimits, outflowLimits);
                 combinedChart.update();
 
-const timeBlocks = [
-    { label: '00:00 - 04:59', start: 0, end: 4 },
-    { label: '05:00 - 08:59', start: 5, end: 8 },
-    { label: '09:00 - 12:59', start: 9, end: 12 },
-    { label: '13:00 - 16:59', start: 13, end: 16 },
-    { label: '17:00 - 20:59', start: 17, end: 20 },
-    { label: '21:00 - 23:59', start: 21, end: 23 }
-];
+                const timeBlocks = [
+                    { label: '00:00 - 04:59', start: 0, end: 4 },
+                    { label: '05:00 - 08:59', start: 5, end: 8 },
+                    { label: '09:00 - 12:59', start: 9, end: 12 },
+                    { label: '13:00 - 16:59', start: 13, end: 16 },
+                    { label: '17:00 - 20:59', start: 17, end: 20 },
+                    { label: '21:00 - 23:59', start: 21, end: 23 }
+                ];
 
 
-const inflowBarData = Array(timeBlocks.length).fill(0);
-const outflowBarData = Array(timeBlocks.length).fill(0);
+                const inflowBarData = Array(timeBlocks.length).fill(0);
+                const outflowBarData = Array(timeBlocks.length).fill(0);
 
 
-// Aggregate data into time blocks
-timeLabels.forEach((label, index) => {
-    const hour = moment(label, 'YYYY-MM-DD HH:mm').hour(); // Parse the label correctly
-    timeBlocks.forEach((block, blockIndex) => {
-        if (hour >= block.start && hour <= block.end) {
-            inflowBarData[blockIndex] += inflowData[index];
-            outflowBarData[blockIndex] += outflowData[index];
-        }
-    });
-});
+                // Aggregate data into time blocks
+                timeLabels.forEach((label, index) => {
+                    const hour = moment(label, 'YYYY-MM-DD HH:mm').hour(); // Parse the label correctly
+                    timeBlocks.forEach((block, blockIndex) => {
+                        if (hour >= block.start && hour <= block.end) {
+                            inflowBarData[blockIndex] += inflowData[index];
+                            outflowBarData[blockIndex] += outflowData[index];
+                        }
+                    });
+                });
 
 
-const barLabels = timeBlocks.map(block => block.label);
+                const barLabels = timeBlocks.map(block => block.label);
 
-const barChartData = {
-    labels: barLabels,
-    datasets: [
-        {
-            label: 'Bezug (kWh)',
-            backgroundColor: 'rgba(75, 192, 192, 0.2)',
-            borderColor: 'rgba(75, 192, 192, 1)',
-            borderWidth: 1,
-            data: inflowBarData
-        },
-        {
-            label: 'Einspeisung (kWh)',
-            backgroundColor: 'rgba(153, 102, 255, 0.2)',
-            borderColor: 'rgba(153, 102, 255, 1)',
-            borderWidth: 1,
-            data: outflowBarData
-        }
-    ]
-};
+                const barChartData = {
+                    labels: barLabels,
+                    datasets: [
+                        {
+                            label: 'Bezug (kWh)',
+                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                            borderColor: 'rgba(75, 192, 192, 1)',
+                            borderWidth: 1,
+                            data: inflowBarData
+                        },
+                        {
+                            label: 'Einspeisung (kWh)',
+                            backgroundColor: 'rgba(153, 102, 255, 0.2)',
+                            borderColor: 'rgba(153, 102, 255, 1)',
+                            borderWidth: 1,
+                            data: outflowBarData
+                        }
+                    ]
+                };
 
-barChart = new Chart(barCtx, {
-    type: 'bar',
-    data: barChartData,
-    options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        scales: {
-            x: {
-                beginAtZero: true
-            },
-            y: {
-                beginAtZero: true
-            }
-        }
-    }
-});
+                barChart = new Chart(barCtx, {
+                    type: 'bar',
+                    data: barChartData,
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: {
+                                beginAtZero: true
+                            },
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
 
 
                 const maxPointsLine = 75;
@@ -429,92 +425,88 @@ barChart = new Chart(barCtx, {
                 const compactedOutflowLine = compactData(outflowData, timeLabels, maxPointsLine);
 
                 const lineChartData = {
-    labels: compactedInflowLine.labels,
-    datasets: [
-        {
-            label: 'Verbrauch (kWh)',
-            data: compactedInflowLine.data,
-            backgroundColor: 'rgba(75, 192, 192, 0.2)',
-            borderColor: 'rgba(75, 192, 192, 1)',
-            borderWidth: 2, // Make the line more bold
-            fill: false,
-            tension: 0.1,
-            pointRadius: 0, // Remove visualized points
-            pointHoverRadius: 10 // Significantly increase hover radius
-        },
-        {
-            label: 'Einspeisung (kWh)',
-            data: compactedOutflowLine.data,
-            backgroundColor: 'rgba(153, 102, 255, 0.2)',
-            borderColor: 'rgba(153, 102, 255, 1)',
-            borderWidth: 2, // Make the line more bold
-            fill: false,
-            tension: 0.1,
-            pointRadius: 0, // Remove visualized points
-            pointHoverRadius: 10 // Significantly increase hover radius
-        }
-    ]
-};
+                    labels: compactedInflowLine.labels,
+                    datasets: [
+                        {
+                            label: 'Verbrauch (kWh)',
+                            data: compactedInflowLine.data,
+                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                            borderColor: 'rgba(75, 192, 192, 1)',
+                            borderWidth: 2, // Make the line more bold
+                            fill: false,
+                            tension: 0.1,
+                            pointRadius: 0, // Remove visualized points
+                            pointHoverRadius: 10 // Significantly increase hover radius
+                        },
+                        {
+                            label: 'Einspeisung (kWh)',
+                            data: compactedOutflowLine.data,
+                            backgroundColor: 'rgba(153, 102, 255, 0.2)',
+                            borderColor: 'rgba(153, 102, 255, 1)',
+                            borderWidth: 2, // Make the line more bold
+                            fill: false,
+                            tension: 0.1,
+                            pointRadius: 0, // Remove visualized points
+                            pointHoverRadius: 10 // Significantly increase hover radius
+                        }
+                    ]
+                };
 
-lineChart = new Chart(lineCtx, {
-    type: 'line',
-    data: lineChartData,
-    options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        scales: {
-            x: {
-                type: 'category'
-            },
-            y: {
-                type: 'linear',
-                position: 'left',
-                title: {
-                    display: true,
-                    text: 'Verbrauch & Einspeisung (kWh)'
-                }
-            }
-        },
-        plugins: {
-            zoom: {
-                zoom: {
-                    wheel: {
-                        enabled: true,
-                        modifierKey: 'ctrl' // Enable zooming only when Ctrl is pressed
-                    },
-                    pinch: {
-                        enabled: true // Enable zooming with pinch gestures
-                    },
-                    mode: 'xy' // Allow zooming on both axes
-                },
-                pan: {
-                    enabled: true,
-                    mode: 'xy' // Allow panning on both axes
-                }
-            }
-        },
-        elements: {
-            point: {
-                radius: 0, // Remove the visualized points
-                hoverRadius: 10 // Significantly increase hover radius
-            }
-        },
-        interaction: {
-            mode: 'nearest', // Display tooltip for the nearest point
-            axis: 'x', // Only consider x-axis for nearest mode
-            intersect: false // Trigger tooltip even when not intersecting a point
-        },
-        plugins: {
-            tooltip: {
-                enabled: true,
-                mode: 'nearest',
-                intersect: false // Ensure tooltips are shown when hovering near points
-            }
-        }
-    }
-});
-
-
+                lineChart = new Chart(lineCtx, {
+                    type: 'line',
+                    data: lineChartData,
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: {
+                                type: 'category'
+                            },
+                            y: {
+                                type: 'linear',
+                                position: 'left',
+                                title: {
+                                    display: true,
+                                    text: 'Verbrauch & Einspeisung (kWh)'
+                                }
+                            }
+                        },
+                        plugins: {
+                            tooltip: {
+                                enabled: true,
+                                mode: 'nearest',
+                                intersect: false // Ensure tooltips are shown when hovering near points
+                            },
+                            zoom: {
+                                zoom: {
+                                    wheel: {
+                                        enabled: true,
+                                        modifierKey: 'ctrl' // Enable zooming only when Ctrl is pressed
+                                    },
+                                    pinch: {
+                                        enabled: true // Enable zooming with pinch gestures
+                                    },
+                                    mode: 'xy' // Allow zooming on both axes
+                                },
+                                pan: {
+                                    enabled: true,
+                                    mode: 'xy' // Allow panning on both axes
+                                }
+                            }
+                        },
+                        elements: {
+                            point: {
+                                radius: 0, // Remove the visualized points
+                                hoverRadius: 10 // Significantly increase hover radius
+                            }
+                        },
+                        interaction: {
+                            mode: 'nearest', // Display tooltip for the nearest point
+                            axis: 'x', // Only consider x-axis for nearest mode
+                            intersect: false // Trigger tooltip even when not intersecting a point
+                        }
+                    }
+                });
 
 
                 pieChart = new Chart(pieCtx, {
