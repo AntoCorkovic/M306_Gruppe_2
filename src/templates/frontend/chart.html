@@ -1,36 +1,79 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
     <meta charset="UTF-8">
-    <title>Energy Consumption and Inflow</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <title>POWERSTREAM</title>
     <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Electrolize&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='stylesheet/chart.css') }}">
 </head>
 <body>
     <div id="loader"></div>
-    <div class="container hidden" id="content">
-        <h1 class="text-2xl font-bold mb-4">Energy Consumption and Inflow</h1>
-        <div class="swiper-container">
-            <div class="swiper-wrapper">
-                <div class="swiper-slide">
-                    <div class="chart-container">
-                        <canvas id="inflowChart"></canvas>
-                    </div>
-                </div>
-                <div class="swiper-slide">
-                    <div class="chart-container">
-                        <canvas id="outflowChart"></canvas>
-                    </div>
+    <header class="header" id="header">
+        <span>POWER<i class="fas fa-bolt"></i>TREAM</span>
+        <div class="header-buttons">
+            <div class="daterange-container">
+                <input type="text" name="daterange" id="daterange" value="01-01-2019 00:00 - 02-01-2019 23:00" class="daterange-input"/>
+                <span class="daterange-icon">&#x1F4C5;</span> <!-- Calendar Icon -->
+            </div>
+            <div class="dropdown">
+                <button id="downloadButton" class="header-button download-button">Download <span class="dropdown-icon"><i class="fas fa-chevron-down"></i></span></button>
+                <div class="dropdown-content">
+                    <a href="#" id="downloadCSV">CSV <span class="download-icon"><i class="fas fa-download"></i></span></a>
+                    <a href="#" id="downloadJSON">JSON <span class="download-icon"><i class="fas fa-download"></i></span></a>
                 </div>
             </div>
-            <div class="swiper-pagination"></div>
-            <div class="swiper-button-prev"></div>
-            <div class="swiper-button-next"></div>
+            <button id="darkModeToggle" class="header-button">
+                <img src="https://cdn-icons-png.flaticon.com/512/439/439842.png" alt="Light Mode Icon" class="dark-mode-icon" />
+            </button>
+        </div>
+    </header>
+    <div class="content hidden" id="content">
+        <div class="main-wrapper">
+            <div class="main-content bar-chart-wrapper">
+                <div class="chart-container">
+                    <canvas id="combinedChart"></canvas>
+                </div>
+            </div>
+            <div class="info-boxes">
+                <div class="info-box" id="average">
+                    <canvas id="pieChart"></canvas>
+                </div>
+                <div class="info-box" id="total-inflow">
+                    Total Bezug: <span id="total-inflow-value">84.9 kWh</span>
+                </div>
+                <div class="info-box" id="total-outflow">
+                    Total Einspeisung: <span id="total-outflow-value">176.7 kWh</span>
+                </div>
+                <div class="info-box" id="time-difference">
+                    Zeitraum: <span id="time-differnce-value">84.9 kWh</span>
+                </div>
+            </div>
+        </div>
+        <div class="bar-chart-wrapper">
+            <div class="bar-chart-container">
+                <canvas id="barChart"></canvas>
+            </div>
+        </div>
+
+        <div class="bar-chart-wrapper">
+            <div class="chart-container">
+                <canvas id="lineChart"></canvas> <!-- New Canvas for Verbrauch & Einspeisung -->
+            </div>
         </div>
     </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-zoom/1.2.1/chartjs-plugin-zoom.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/moment/min/moment.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
     <script src="{{ url_for('static', filename='script/chart.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom/dist/chartjs-plugin-zoom.min.js"></script>
 </body>
 </html>
