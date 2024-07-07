@@ -22,6 +22,16 @@ document.addEventListener("DOMContentLoaded", function () {
 
     loader.style.display = "block";
 
+
+    downloadCSV.addEventListener('click', function() {
+        window.location.href = '/download/csv';
+    });
+
+    downloadJSON.addEventListener('click', function() {
+        window.location.href = '/download/json';
+    });
+
+
     $(function () {
         $('input[name="daterange"]').daterangepicker({
             timePicker: true,
@@ -60,40 +70,6 @@ document.addEventListener("DOMContentLoaded", function () {
     downloadButton.addEventListener('click', function () {
         dropdownContent.classList.toggle('show');
     });
-
-    function downloadData(format) {
-        const data = JSON.parse(localStorage.getItem('chartData'));
-        let content;
-        if (format === 'csv') {
-            content = convertToCSV(data);
-        } else if (format === 'json') {
-            content = JSON.stringify(data, null, 2);
-        }
-        const blob = new Blob([content], {type: 'text/plain;charset=utf-8'});
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `chart_data.${format}`;
-        a.click();
-        URL.revokeObjectURL(url);
-    }
-
-    function convertToCSV(objArray) {
-        const array = typeof objArray !== 'object' ? JSON.parse(objArray) : objArray;
-        let str = '';
-        for (let i = 0; i < array.length; i++) {
-            let line = '';
-            for (let index in array[i]) {
-                if (line !== '') line += ',';
-                line += array[i][index];
-            }
-            str += line + '\r\n';
-        }
-        return str;
-    }
-
-    downloadCSV.addEventListener('click', () => downloadData('csv'));
-    downloadJSON.addEventListener('click', () => downloadData('json'));
 
     const loadData = (start, end) => {
         return fetchChartData(start, end);
