@@ -632,3 +632,43 @@ body.dark-mode .daterangepicker .drp-buttons {
 .daterangepicker .cancelBtn:hover {
     background-color: var(--date-picker-hover-bg);
 }
+
+/* Download button styles */
+.download-button {
+    background-color: var(--background-color);
+    color: var(--text-color);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.download-button:hover {
+    background-color: var(--purple-color);
+    color: #fff;
+    transform: translateY(-2px);
+}
+
+.download-button .download-icon {
+    margin-left: 10px;
+    font-size: 16px;
+    transition: color 0.3s ease;
+}
+
+.download-button:hover .download-icon {
+    color: #fff;
+}
+
+/* Box hover effects */
+.info-box, .left-box, .file-table-wrapper {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.info-box:hover, .left-box:hover, .file-table-wrapper:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px var(--box-shadow-color);
+}
