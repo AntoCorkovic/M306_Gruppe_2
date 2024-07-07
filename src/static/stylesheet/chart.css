@@ -9,6 +9,11 @@
     --box-shadow-color: rgba(0, 0, 0, 0.1);
     --gold-color: #FFD700; /* Goldene Farbe */
     --purple-color: #9370DB; /* Lila Farbe */
+    --date-picker-bg: #fff;
+    --date-picker-text: #333;
+    --date-picker-selected-bg: #9370DB; /* Purple color */
+    --date-picker-selected-text: #fff;
+    --date-picker-hover-bg: #B19CD9;
 }
 
 body {
@@ -92,6 +97,14 @@ body {
     margin-top: 10px;
     font-size: 1.5em;
     color: var(--gold-color); /* Goldene Farbe für die Zahlen */
+}
+
+#total-inflow-value {
+    color: var(--purple-color);
+}
+
+#total-outflow-value {
+    color: #4BC0C0;
 }
 
 .info-box:last-child {
@@ -445,6 +458,11 @@ body.dark-mode {
     --box-shadow-color: rgba(0, 0, 0, 0.5);
     --gold-color: #FFD700; /* Goldene Farbe */
     --purple-color: #9370DB; /* Lila Farbe im Darkmode */
+    --date-picker-bg: #2c2c2c;
+    --date-picker-text: #f0f0f0;
+    --date-picker-selected-bg: #9370DB; /* Keep purple in dark mode */
+    --date-picker-selected-text: #fff;
+    --date-picker-hover-bg: #7B68EE;
 }
 
 body.dark-mode .daterange-input {
@@ -497,7 +515,120 @@ body.dark-mode .dropdown-content a .download-icon {
     color: black; /* Textfarbe für Icons */
 }
 
+body.dark-mode .daterangepicker {
+    background-color: #2c2c2c;
+    color: #f0f0f0;
+    border-color: #444;
+}
+
+body.dark-mode .daterangepicker select.hourselect,
+body.dark-mode .daterangepicker select.minuteselect,
+body.dark-mode .daterangepicker select.secondselect,
+body.dark-mode .daterangepicker select.ampmselect {
+    background-color: #333;
+    color: #f0f0f0;
+    border-color: #555;
+}
+
+body.dark-mode .daterangepicker {
+    background-color: #2c2c2c;
+    color: #f0f0f0;
+    border: 2px solid #9370DB; /* Purple border to make it stand out */
+    box-shadow: 0 0 10px rgba(147, 112, 219, 0.5); /* Subtle purple glow */
+}
+
+body.dark-mode .daterangepicker:before,
+body.dark-mode .daterangepicker:after {
+    border-bottom-color: #9370DB; /* Match the new border color */
+}
+
+body.dark-mode .daterangepicker .calendar-table {
+    border: none; /* Remove inner borders if any */
+}
+
+body.dark-mode .daterangepicker .calendar-table {
+    background-color: #2c2c2c;
+    border-color: #444;
+}
+
+body.dark-mode .daterangepicker td.off,
+body.dark-mode .daterangepicker td.off.in-range,
+body.dark-mode .daterangepicker td.off.start-date,
+body.dark-mode .daterangepicker td.off.end-date {
+    background-color: #222;
+    color: #666;
+}
+
+body.dark-mode .daterangepicker td.available:hover,
+body.dark-mode .daterangepicker th.available:hover {
+    background-color: #444;
+}
+
+body.dark-mode .daterangepicker td.active,
+body.dark-mode .daterangepicker td.active:hover {
+    background-color: #9370DB;
+    color: #fff;
+}
+
+body.dark-mode .daterangepicker td.in-range {
+    background-color: #7B68EE;
+    color: #fff;
+}
+
+body.dark-mode .daterangepicker .calendar-table .next span,
+body.dark-mode .daterangepicker .calendar-table .prev span {
+    border-color: #f0f0f0;
+}
+
+body.dark-mode .daterangepicker .drp-buttons {
+    border-top-color: #444;
+}
+
 .header-button .fa-sun,
 .header-button .fa-moon {
     font-size: 1.2em; /* Adjust icon size as needed */
+}
+
+
+/* Date picker styles */
+.daterangepicker {
+    background-color: var(--date-picker-bg);
+    color: var(--date-picker-text);
+    border-color: var(--box-shadow-color);
+}
+
+.daterangepicker td.active,
+.daterangepicker td.active:hover {
+    background-color: var(--date-picker-selected-bg);
+    color: var(--date-picker-selected-text);
+}
+
+.daterangepicker td.in-range {
+    background-color: var(--date-picker-hover-bg);
+    color: var(--date-picker-text);
+}
+
+.daterangepicker .calendar-table .next span,
+.daterangepicker .calendar-table .prev span {
+    border-color: var(--date-picker-text);
+}
+
+.daterangepicker .ranges li.active {
+    background-color: var(--date-picker-selected-bg);
+    color: var(--date-picker-selected-text);
+}
+
+.daterangepicker .ranges li:hover {
+    background-color: var(--date-picker-hover-bg);
+}
+
+.daterangepicker .applyBtn,
+.daterangepicker .cancelBtn {
+    background-color: var(--date-picker-selected-bg);
+    color: var(--date-picker-selected-text);
+}
+
+.daterangepicker .applyBtn:hover,
+.daterangepicker .cancelBtn:hover {
+    background-color: var(--date-picker-hover-bg);
 }
