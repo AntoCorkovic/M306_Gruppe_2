@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
-
-from flask import Flask, render_template, jsonify, request
-
+from flask import Flask, render_template, jsonify, request, send_file
+from io import BytesIO
+from converter import Converter
 from src.parser import Parser
 
 app = Flask(__name__)
@@ -10,15 +10,35 @@ counterstands = None
 consumptionvalues = None
 
 
-@app.route('/')
-def hello_world():  # put application's code here
+@app.route('/download/csv')
+def download_csv():
+    global counterstands
+    if counterstands is None:
+        return jsonify({"error": "Data not loaded"}), 400
 
-    pass
+    converter = Converter()
+    output = BytesIO()
+    converter.export_counterstands_to_csv(counterstands, output)
+    output.seek(0)
+    return send_file(output,
+                     mimetype='text/csv',
+                     as_attachment=True,
+                     download_name='counterstands.csv')
 
+@app.route('/download/json')
+def download_json():
+    global counterstands
+    if counterstands is None:
+        return jsonify({"error": "Data not loaded"}), 400
 
-@app.route('/ui')
-def ui():
-    return render_template('frontend/index.html')
+    converter = Converter()
+    output = BytesIO()
+    converter.export_counterstands_to_json(counterstands, output)
+    output.seek(0)
+    return send_file(output,
+                     mimetype='application/json',
+                     as_attachment=True,
+                     download_name='counterstands.json')
 
 
 @app.route('/chart')
