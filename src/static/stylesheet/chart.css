@@ -672,3 +672,83 @@ body.dark-mode .daterangepicker .drp-buttons {
     transform: translateY(-5px);
     box-shadow: 0 6px 12px var(--box-shadow-color);
 }
+
+ /* New styles for upload button and drag-drop area */
+.upload-button {
+    background-color: var(--background-color);
+    color: var(--text-color);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.upload-button:hover {
+    background-color: var(--purple-color);
+    color: #fff;
+    transform: translateY(-2px);
+}
+
+.upload-icon {
+    margin-right: 10px;
+    font-size: 16px;
+}
+
+.drag-drop-area {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 300px;
+    height: 200px;
+    background-color: var(--secondary-color);
+    border: 2px dashed var(--purple-color);
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    z-index: 1000;
+    /* Add box-shadow for border shadow effect */
+    box-shadow: 0 0 15px rgba(147, 112, 219, 0.5);
+    transition: box-shadow 0.3s ease;
+}
+
+.drag-drop-area.active {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Add hover effect to enhance shadow */
+.drag-drop-area:hover {
+    box-shadow: 0 0 20px rgba(147, 112, 219, 0.7);
+}
+
+.drag-drop-area p {
+    margin-bottom: 10px;
+}
+
+#fileInput {
+    display: none;
+}
+
+/* Style for the browse button inside drag-drop area */
+#browseButton {
+    background-color: var(--purple-color);
+    color: #fff;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+#browseButton:hover {
+    background-color: #7B68EE;
+}

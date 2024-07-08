@@ -14,11 +14,11 @@
 <body>
     <div id="loader"></div>
     <header class="header" id="header">
-        <span>POWER<i class="fas fa-bolt"></i>TREAM</span>
+        <span>POWER<i class="fas fa-bolt"></i>STREAM</span>
         <div class="header-buttons">
             <div class="daterange-container">
                 <input type="text" name="daterange" id="daterange" value="01-01-2019 00:00 - 02-01-2019 23:00" class="daterange-input"/>
-                <span class="daterange-icon">&#x1F4C5;</span> <!-- Calendar Icon -->
+                <span class="daterange-icon">&#x1F4C5;</span>
             </div>
             <div class="dropdown">
                 <button id="downloadButton" class="header-button download-button">Download <span class="dropdown-icon"><i class="fas fa-chevron-down"></i></span></button>
@@ -27,11 +27,23 @@
                     <a href="#" id="downloadJSON">JSON <span class="download-icon"><i class="fas fa-download"></i></span></a>
                 </div>
             </div>
+            <!-- New Upload Button -->
+            <button id="uploadButton" class="header-button upload-button">
+                <span class="upload-icon"><i class="fas fa-upload"></i></span>
+                Upload
+            </button>
             <button id="darkModeToggle" class="header-button">
                 <img src="https://cdn-icons-png.flaticon.com/512/439/439842.png" alt="Light Mode Icon" class="dark-mode-icon" />
             </button>
         </div>
     </header>
+     <!-- New Drag and Drop Area -->
+    <div id="dragDropArea" class="drag-drop-area">
+        <p>Drag & Drop ESL or sdat files here</p>
+        <p>or</p>
+        <button id="browseButton" class="header-button">Browse Files</button>
+        <input type="file" id="fileInput" accept=".esl,.sdat" multiple>
+    </div>
     <div class="content hidden" id="content">
         <div class="main-wrapper">
             <div class="main-content bar-chart-wrapper">

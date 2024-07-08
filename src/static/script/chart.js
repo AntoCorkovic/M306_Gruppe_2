@@ -11,6 +11,10 @@ document.addEventListener("DOMContentLoaded", function () {
     const dropdownContent = document.querySelector('.dropdown-content');
     const darkModeToggle = document.getElementById('darkModeToggle');
     const pieCtx = document.getElementById('pieChart').getContext('2d');
+    const uploadButton = document.getElementById('uploadButton');
+    const dragDropArea = document.getElementById('dragDropArea');
+    const browseButton = document.getElementById('browseButton');
+    const fileInput = document.getElementById('fileInput');
 
 
     let combinedChart = null;
@@ -21,6 +25,47 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     loader.style.display = "block";
+
+    uploadButton.addEventListener('click', function() {
+        dragDropArea.classList.add('active');
+    });
+
+    browseButton.addEventListener('click', function() {
+        fileInput.click();
+    });
+
+    fileInput.addEventListener('change', handleFiles);
+
+    dragDropArea.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        dragDropArea.classList.add('dragover');
+    });
+
+    dragDropArea.addEventListener('dragleave', function() {
+        dragDropArea.classList.remove('dragover');
+    });
+
+    dragDropArea.addEventListener('drop', function(e) {
+        e.preventDefault();
+        dragDropArea.classList.remove('dragover');
+        handleFiles(e.dataTransfer.files);
+    });
+
+    function handleFiles(files) {
+        // Here you would process the files
+        console.log('Files to upload:', files);
+        // You can add your file processing logic here
+
+        // Close the drag-drop area after file selection
+        dragDropArea.classList.remove('active');
+    }
+
+    // Close drag-drop area when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!dragDropArea.contains(e.target) && e.target !== uploadButton) {
+            dragDropArea.classList.remove('active');
+        }
+    });
 
 
     downloadCSV.addEventListener('click', function() {
