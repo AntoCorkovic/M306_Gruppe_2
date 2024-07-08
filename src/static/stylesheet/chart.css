@@ -2,18 +2,19 @@
 
 /* Farbvariablen */
 :root {
-    --background-color: #f4f4f4; /* Babyblauer Hintergrund */
+    --background-color: #f4f4f4;
     --primary-color: #007bff;
     --secondary-color: #fff;
     --text-color: #333;
     --box-shadow-color: rgba(0, 0, 0, 0.1);
-    --gold-color: #FFD700; /* Goldene Farbe */
-    --purple-color: #9370DB; /* Lila Farbe */
+    --gold-color: #FFD700;
+    --purple-color: #9370DB;
     --date-picker-bg: #fff;
     --date-picker-text: #333;
-    --date-picker-selected-bg: #9370DB; /* Purple color */
+    --date-picker-selected-bg: #9370DB;
     --date-picker-selected-text: #fff;
     --date-picker-hover-bg: #B19CD9;
+    --header-bg: linear-gradient(135deg, #007bff, #9370DB);
 }
 
 body {
@@ -25,20 +26,20 @@ body {
     justify-content: flex-start;
     height: 100vh;
     margin: 0;
-    overflow: hidden; /* Scrollbars entfernen */
+    overflow: hidden;
 }
 
 .content {
-    width: calc(100% - 40px); /* Sicherstellen, dass volle Breite verwendet wird */
+    width: calc(100% - 40px);
     padding: 20px;
-    box-sizing: border-box; /* Padding in Breitenberechnung einbeziehen */
-    overflow: auto; /* Ermöglicht Scrollen */
-    -ms-overflow-style: none;  /* IE and Edge */
-    scrollbar-width: none;  /* Firefox */
+    box-sizing: border-box;
+    overflow: auto;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
 }
 
 .content::-webkit-scrollbar {
-    display: none;  /* Chrome, Safari and Opera */
+    display: none;
 }
 
 .main-wrapper {
@@ -139,51 +140,53 @@ canvas {
 }
 
 .header {
-    width: calc(100% - 80px); /* Gleiche Breite wie der Inhalt */
-    max-width: 100%; /* Maximale Breite */
-    margin: 20px 20px 0px; /* Gleicher Abstand links und rechts, unten 20px */
-    padding: 10px 20px;
+    width: 100%;
+    padding: 15px 30px;
     background: var(--secondary-color);
     box-shadow: 0 4px 6px var(--box-shadow-color);
-    border-radius: 8px;
+    border-radius: 0 0 15px 15px;
     text-align: center;
-    font-size: 20px;
+    font-size: 24px;
     font-weight: bold;
-    box-sizing: border-box; /* Padding in Breitenberechnung einbeziehen */
+    box-sizing: border-box;
     position: relative;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-family: 'Electrolize', sans-serif; /* Schriftart für den Header-Titel */
+    font-family: 'Electrolize', sans-serif;
+    color: var(--purple-color);
+    transition: all 0.3s ease;
 }
 
 .header span {
-    color: var(--purple-color); /* Lila Farbe für den Text */
+    display: flex;
+    align-items: center;
 }
 
 .header span .fa-bolt {
-    color: var(--gold-color); /* Goldene Farbe für das Icon */
+    color: var(--gold-color);
+    margin-left: 5px;
+    font-size: 28px;
 }
 
 .header-buttons {
     display: flex;
     align-items: center;
-    margin-left: auto; /* Schiebt die Buttons nach rechts */
 }
 
 .header-button {
-    background-color: var(--background-color); /* Hintergrundfarbe des Buttons */
-    color: var(--text-color); /* Textfarbe anpassen */
+    background-color: rgba(255, 255, 255, 0.2);
+    color: var(--secondary-color);
     border: none;
     padding: 10px 20px;
-    border-radius: 5px;
+    border-radius: 25px;
     cursor: pointer;
     font-size: 16px;
-    margin-left: 15px; /* Füge Margin links hinzu */
+    margin-left: 15px;
     display: flex;
     align-items: center;
-    position: relative; /* Ensures dropdown-content aligns with button */
-    transition: background-color 0.3s ease;
+    position: relative;
+    transition: all 0.3s ease;
 }
 
 .download-button {
@@ -210,8 +213,8 @@ canvas {
 }
 
 .header-button:hover {
-    background-color: var(--purple-color); /* Hover-Farbe */
-    color: #fff; /* Textfarbe beim Hover */
+    background-color: rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px);
 }
 
 .header-button:hover .dropdown-icon,
@@ -252,6 +255,7 @@ body.dark-mode .dark-mode-icon {
     margin-right: 10px;
     width: 325px;
     box-sizing: border-box;
+    transition: all 0.3s ease;
 }
 
 .daterange-input:focus {
@@ -416,11 +420,31 @@ body.dark-mode .dark-mode-icon {
     margin-right: 8px;
 }
 
+.download-button,
+.upload-button {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: var(--secondary-color);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    transition: all 0.3s ease;
+}
+
 /* Reusing the style of header-button for download-button */
 .download-button:hover,
-.download-button:hover .dropdown-icon,
-.download-button:hover .dropdown-icon i {
-    color: #fff; /* Textfarbe beim Hover */
+.upload-button:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px);
+}
+
+.download-icon,
+.upload-icon {
+    margin-left: 10px;
+    font-size: 16px;
 }
 
 .pagination {
