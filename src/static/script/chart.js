@@ -211,8 +211,6 @@ document.addEventListener("DOMContentLoaded", function () {
         showLoader()
         loadData(start, end)
             .then(data => {
-                content.classList.remove("hidden");
-
                 const compactData = (data, labels, maxPoints) => {
                     const interval = Math.max(1, Math.floor(data.length / maxPoints));
                     const compactedData = [];

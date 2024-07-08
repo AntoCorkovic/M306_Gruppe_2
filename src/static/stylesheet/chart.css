@@ -21,6 +21,7 @@
     --box-color-2: #7B68EE;
     --box-color-3: #8A2BE2;
     --box-shadow: #E6E6FA;
+    --loader-shadow: #E6E6FA; /* New variable for loader shadow */
 }
 
 body {
@@ -202,7 +203,7 @@ canvas {
 }
 
 .boxes .box > div:nth-child(4) {
-    --background: var(--box-shadow);
+    --background: var(--loader-shadow);
     --top: 0;
     --left: 0;
     --translateZ: calc(var(--size) * 3 * -1);
@@ -243,15 +244,6 @@ canvas {
     background-color: var(--loader-bg-light);
     z-index: 9999;
     transition: background-color 0.3s ease;
-}
-
-/* Dark mode styles */
-body.dark-mode #loader {
-    background-color: var(--loader-bg-dark);
-}
-
-body.dark-mode .boxes .box > div:nth-child(4) {
-    --background: #4B0082;
 }
 
 .hidden {
@@ -552,6 +544,11 @@ body.dark-mode {
     --date-picker-selected-bg: #9370DB; /* Keep purple in dark mode */
     --date-picker-selected-text: #fff;
     --date-picker-hover-bg: #7B68EE;
+    --loader-shadow: #c0c0c0 ;
+}
+
+body.dark-mode #loader {
+    background-color: var(--loader-bg-dark);
 }
 
 body.dark-mode .daterange-input {
