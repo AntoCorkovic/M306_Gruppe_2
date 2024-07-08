@@ -400,29 +400,40 @@ document.addEventListener("DOMContentLoaded", function () {
                 combinedChart.update();
 
                 const timeBlocks = [
-                    { label: '00:00 - 04:59', start: 0, end: 4 },
-                    { label: '05:00 - 08:59', start: 5, end: 8 },
-                    { label: '09:00 - 12:59', start: 9, end: 12 },
-                    { label: '13:00 - 16:59', start: 13, end: 16 },
-                    { label: '17:00 - 20:59', start: 17, end: 20 },
-                    { label: '21:00 - 23:59', start: 21, end: 23 }
+                    { label: '00:00 - 04:59', start: 0, end: 4, timeperiods: 20 },
+                    { label: '05:00 - 08:59', start: 5, end: 8, timeperiods: 16 },
+                    { label: '09:00 - 12:59', start: 9, end: 12 , timeperiods: 16},
+                    { label: '13:00 - 16:59', start: 13, end: 16 , timeperiods: 16},
+                    { label: '17:00 - 20:59', start: 17, end: 20 , timeperiods: 16},
+                    { label: '21:00 - 23:59', start: 21, end: 23 , timeperiods: 12}
                 ];
 
 
                 const inflowBarData = Array(timeBlocks.length).fill(0);
                 const outflowBarData = Array(timeBlocks.length).fill(0);
+const blockOccurrences = Array(timeBlocks.length).fill(0);
 
+// Aggregate data into time blocks
+timeLabels.forEach((label, index) => {
+    const date = moment(label, 'YYYY-MM-DD HH:mm');
+    const hour = date.hour();
 
-                // Aggregate data into time blocks
-                timeLabels.forEach((label, index) => {
-                    const hour = moment(label, 'YYYY-MM-DD HH:mm').hour(); // Parse the label correctly
-                    timeBlocks.forEach((block, blockIndex) => {
-                        if (hour >= block.start && hour <= block.end) {
-                            inflowBarData[blockIndex] += inflowData[index];
-                            outflowBarData[blockIndex] += outflowData[index];
-                        }
-                    });
-                });
+    timeBlocks.forEach((block, blockIndex) => {
+        if (hour >= block.start && hour <= block.end) {
+            inflowBarData[blockIndex] += inflowData[index];
+            outflowBarData[blockIndex] += outflowData[index];
+            blockOccurrences[blockIndex]++;
+        }
+    });
+});
+
+// Calculate averages
+for (let i = 0; i < timeBlocks.length; i++) {
+    if (blockOccurrences[i] > 0) {
+        inflowBarData[i] /= ( blockOccurrences[i] / timeBlocks[i].timeperiods)
+        outflowBarData[i] /= (blockOccurrences[i] / timeBlocks[i].timeperiods);
+    }
+}
 
 
                 const barLabels = timeBlocks.map(block => block.label);
@@ -431,14 +442,14 @@ document.addEventListener("DOMContentLoaded", function () {
                     labels: barLabels,
                     datasets: [
                         {
-                            label: 'Bezug (kWh)',
+                            label: 'Durchschnittlicher Bezug (kWh)',
                             backgroundColor: 'rgba(75, 192, 192, 0.2)',
                             borderColor: 'rgba(75, 192, 192, 1)',
                             borderWidth: 1,
                             data: inflowBarData
                         },
                         {
-                            label: 'Einspeisung (kWh)',
+                            label: 'Durchschnittliche Einspeisung (kWh)',
                             backgroundColor: 'rgba(153, 102, 255, 0.2)',
                             borderColor: 'rgba(153, 102, 255, 1)',
                             borderWidth: 1,
