@@ -362,8 +362,7 @@ body.dark-mode .dark-mode-icon {
 
 .daterange-container {
     position: relative;
-    display: flex;
-    align-items: center;
+    display: inline-block;
 }
 
 .daterange-input {
@@ -384,10 +383,10 @@ body.dark-mode .dark-mode-icon {
 
 .daterange-icon {
     position: absolute;
-    right: 20px;
-    pointer-events: none;
-    font-size: 20px;
-    color: var(--primary-color);
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #9370DB; /* Purple color */
 }
 
 .daterangepicker .applyBtn,
@@ -558,6 +557,7 @@ body.dark-mode {
 body.dark-mode .daterange-input {
     background-color: var(--secondary-color);
     color: var(--text-color);
+    border-color: #444; /* Changed: Remove white border in dark mode */
 }
 
 body.dark-mode .header-button {
