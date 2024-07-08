@@ -24,7 +24,78 @@ document.addEventListener("DOMContentLoaded", function () {
     let pieChart = null
 
 
-    loader.style.display = "block";
+    // Function to set dark mode
+    function setDarkMode(isDark) {
+        if (isDark) {
+            document.body.classList.add('dark-mode');
+            localStorage.setItem('darkMode', 'enabled');
+            darkModeToggle.querySelector('img').src = 'https://cdn-icons-png.flaticon.com/512/1823/1823324.png';
+            darkModeToggle.querySelector('img').alt = 'Dark Mode Icon';
+        } else {
+            document.body.classList.remove('dark-mode');
+            localStorage.setItem('darkMode', 'disabled');
+            darkModeToggle.querySelector('img').src = 'https://cdn-icons-png.flaticon.com/512/439/439842.png';
+            darkModeToggle.querySelector('img').alt = 'Light Mode Icon';
+        }
+    }
+
+    // Check for saved dark mode preference
+    const savedDarkMode = localStorage.getItem('darkMode');
+
+    // Set initial dark mode state
+    if (savedDarkMode === 'enabled') {
+        setDarkMode(true);
+    } else {
+        setDarkMode(false);
+    }
+
+    // Dark mode toggle functionality
+    darkModeToggle.addEventListener('click', () => {
+        const isDarkMode = document.body.classList.contains('dark-mode');
+        setDarkMode(!isDarkMode);
+    });
+
+    loader.innerHTML = `
+        <div class="boxes">
+            <div class="box">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+            <div class="box">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+            <div class="box">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+            <div class="box">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+        </div>
+    `;
+
+    // Function to show loader
+    function showLoader() {
+        loader.style.display = "flex";
+        content.classList.add("hidden");
+    }
+
+    // Function to hide loader
+    function hideLoader() {
+        loader.style.display = "none";
+        content.classList.remove("hidden");
+    }
+
 
     uploadButton.addEventListener('click', function() {
         dragDropArea.classList.add('active');
@@ -137,11 +208,9 @@ document.addEventListener("DOMContentLoaded", function () {
     showData("01-01-2019 00:00", "02-01-2019 23:00");
 
     function showData(start, end) {
+        showLoader()
         loadData(start, end)
             .then(data => {
-                loader.style.display = "none";
-                content.classList.remove("hidden");
-
                 const compactData = (data, labels, maxPoints) => {
                     const interval = Math.max(1, Math.floor(data.length / maxPoints));
                     const compactedData = [];
@@ -580,23 +649,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 // Display the time difference
                 time_difference.innerText = `${totalDays} d ${remainingHours} h`;
-
+                hideLoader()
             })
             .catch(error => {
-                loader.style.display = "none";
+                hideLoader()
                 console.error('Error fetching data:', error);
             });
     }
 
-    darkModeToggle.addEventListener('click', () => {
-        document.body.classList.toggle('dark-mode');
-        const icon = darkModeToggle.querySelector('img');
-        if (document.body.classList.contains('dark-mode')) {
-            icon.src = 'https://cdn-icons-png.flaticon.com/512/1823/1823324.png';
-            icon.alt = 'Dark Mode Icon';
-        } else {
-            icon.src = 'https://cdn-icons-png.flaticon.com/512/439/439842.png';
-            icon.alt = 'Light Mode Icon';
-        }
-    });
 });

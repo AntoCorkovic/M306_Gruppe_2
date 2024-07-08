@@ -15,6 +15,13 @@
     --date-picker-selected-text: #fff;
     --date-picker-hover-bg: #B19CD9;
     --header-bg: linear-gradient(135deg, #007bff, #9370DB);
+    --loader-bg-light: rgba(255, 255, 255, 0.8);
+    --loader-bg-dark: rgba(0, 0, 0, 0.8);
+    --box-color-1: #9370DB;
+    --box-color-2: #7B68EE;
+    --box-color-3: #8A2BE2;
+    --box-shadow: #E6E6FA;
+    --loader-shadow: #E6E6FA; /* New variable for loader shadow */
 }
 
 body {
@@ -117,22 +124,126 @@ canvas {
     height: 100% !important;
 }
 
-#loader {
-    border: 10px solid lightgrey;
-    border-radius: 50%;
-    border-top: 10px solid var(--purple-color);
-    width: 40px;
-    height: 40px;
-    animation: spin 2s linear infinite;
-    position: absolute;
-    transform: translate(-50%, -50%);
-    padding: 10px;
-    margin: 15% auto auto;
+/* New loader styles */
+.boxes {
+    --size: 32px;
+    --duration: 800ms;
+    height: calc(var(--size) * 2);
+    width: calc(var(--size) * 3);
+    position: relative;
+    transform-style: preserve-3d;
+    transform-origin: 50% 50%;
+    margin-top: calc(var(--size) * 1.5 * -1);
+    transform: rotateX(60deg) rotateZ(45deg) rotateY(0deg) translateZ(0px);
 }
 
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+.boxes .box {
+    width: var(--size);
+    height: var(--size);
+    top: 0;
+    left: 0;
+    position: absolute;
+    transform-style: preserve-3d;
+}
+
+.boxes .box:nth-child(1) {
+    transform: translate(100%, 0);
+    animation: box1 var(--duration) linear infinite;
+}
+
+.boxes .box:nth-child(2) {
+    transform: translate(0, 100%);
+    animation: box2 var(--duration) linear infinite;
+}
+
+.boxes .box:nth-child(3) {
+    transform: translate(100%, 100%);
+    animation: box3 var(--duration) linear infinite;
+}
+
+.boxes .box:nth-child(4) {
+    transform: translate(200%, 0);
+    animation: box4 var(--duration) linear infinite;
+}
+
+.boxes .box > div {
+    --background: var(--box-color-1);
+    --top: auto;
+    --right: auto;
+    --bottom: auto;
+    --left: auto;
+    --translateZ: calc(var(--size) / 2);
+    --rotateY: 0deg;
+    --rotateX: 0deg;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: var(--background);
+    top: var(--top);
+    right: var(--right);
+    bottom: var(--bottom);
+    left: var(--left);
+    transform: rotateY(var(--rotateY)) rotateX(var(--rotateX)) translateZ(var(--translateZ));
+}
+
+.boxes .box > div:nth-child(1) {
+    --top: 0;
+    --left: 0;
+}
+
+.boxes .box > div:nth-child(2) {
+    --background: var(--box-color-2);
+    --right: 0;
+    --rotateY: 90deg;
+}
+
+.boxes .box > div:nth-child(3) {
+    --background: var(--box-color-3);
+    --rotateX: -90deg;
+}
+
+.boxes .box > div:nth-child(4) {
+    --background: var(--loader-shadow);
+    --top: 0;
+    --left: 0;
+    --translateZ: calc(var(--size) * 3 * -1);
+}
+
+@keyframes box1 {
+    0%, 50% { transform: translate(100%, 0); }
+    100% { transform: translate(200%, 0); }
+}
+
+@keyframes box2 {
+    0% { transform: translate(0, 100%); }
+    50% { transform: translate(0, 0); }
+    100% { transform: translate(100%, 0); }
+}
+
+@keyframes box3 {
+    0%, 50% { transform: translate(100%, 100%); }
+    100% { transform: translate(0, 100%); }
+}
+
+@keyframes box4 {
+    0% { transform: translate(200%, 0); }
+    50% { transform: translate(200%, 100%); }
+    100% { transform: translate(100%, 100%); }
+}
+
+/* Loader container styles */
+#loader {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--loader-bg-light);
+    z-index: 9999;
+    transition: background-color 0.3s ease;
 }
 
 .hidden {
@@ -243,8 +354,7 @@ body.dark-mode .dark-mode-icon {
 
 .daterange-container {
     position: relative;
-    display: flex;
-    align-items: center;
+    display: inline-block;
 }
 
 .daterange-input {
@@ -265,10 +375,10 @@ body.dark-mode .dark-mode-icon {
 
 .daterange-icon {
     position: absolute;
-    right: 20px;
-    pointer-events: none;
-    font-size: 20px;
-    color: var(--primary-color);
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #9370DB; /* Purple color */
 }
 
 .daterangepicker .applyBtn,
@@ -366,59 +476,6 @@ body.dark-mode .dark-mode-icon {
     margin-bottom: 20px; /* Abstand zwischen den Boxen */
 }
 
-.file-table-wrapper {
-    flex-grow: 1; /* Tabelle nimmt die restliche verfügbare Breite ein */
-    background: var(--secondary-color);
-    box-shadow: 0 4px 6px var(--box-shadow-color);
-    border-radius: 8px;
-    padding: 20px;
-    box-sizing: border-box;
-}
-
-.file-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-.file-table th,
-.file-table td {
-    padding: 12px 15px;
-    border: 1px solid #ddd;
-    text-align: left;
-    height: 40px; /* Gleiche Höhe für alle Zellen */
-}
-
-.file-table th {
-    background-color: var(--primary-color);
-    color: var(--secondary-color);
-    font-weight: bold;
-    position: sticky;
-    top: 0;
-    z-index: 1;
-}
-
-.file-table td {
-    background-color: var(--secondary-color);
-}
-
-.file-table tr:nth-child(even) {
-    background-color: #f9f9f9;
-}
-
-.file-table tr:hover {
-    background-color: #f1f1f1;
-    cursor: pointer;
-}
-
-.file-status {
-    display: flex;
-    align-items: center;
-    height: 100%; /* Gleiche Höhe wie die anderen Felder */
-}
-
-.file-status i {
-    margin-right: 8px;
-}
 
 .download-button,
 .upload-button {
@@ -487,11 +544,17 @@ body.dark-mode {
     --date-picker-selected-bg: #9370DB; /* Keep purple in dark mode */
     --date-picker-selected-text: #fff;
     --date-picker-hover-bg: #7B68EE;
+    --loader-shadow: #c0c0c0 ;
+}
+
+body.dark-mode #loader {
+    background-color: var(--loader-bg-dark);
 }
 
 body.dark-mode .daterange-input {
     background-color: var(--secondary-color);
     color: var(--text-color);
+    border-color: #444; /* Changed: Remove white border in dark mode */
 }
 
 body.dark-mode .header-button {
