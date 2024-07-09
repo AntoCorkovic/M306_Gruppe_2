@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <title>POWERSTREAM</title>
+    <title>Energieagentur Bünzli</title>
     <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css">
@@ -14,30 +14,43 @@
 <body>
     <div id="loader"></div>
     <header class="header" id="header">
-        <span>POWER<i class="fas fa-bolt"></i>STREAM</span>
+        <span>Energieagentur Bünzli</span>
         <div class="header-buttons">
             <div class="daterange-container">
                 <input type="text" name="daterange" id="daterange" value="01-01-2019 00:00 - 02-01-2019 23:00" class="daterange-input"/>
                 <span class="daterange-icon">&#x1F4C5;</span>
             </div>
-            <div class="dropdown">
-                <button id="downloadButton" class="header-button download-button">Download <span class="dropdown-icon"><i class="fas fa-chevron-down"></i></span></button>
-                <div class="dropdown-content">
-                    <a href="#" id="downloadCSV">CSV <span class="download-icon"><i class="fas fa-download"></i></span></a>
-                    <a href="#" id="downloadJSON">JSON <span class="download-icon"><i class="fas fa-download"></i></span></a>
+            <!-- Account Button with Dropdown -->
+            <div class="account-dropdown">
+                <button id="accountDropdownButton" class="header-button account-button">
+                    <img src="https://cdn-icons-png.flaticon.com/512/1077/1077012.png" alt="Account Icon" class="account-icon" />
+                </button>
+                <div class="account-dropdown-content">
+                    <button id="darkModeToggle" class="header-button">
+                        <img src="https://cdn-icons-png.flaticon.com/512/439/439842.png" alt="Light Mode Icon" class="dark-mode-icon" />
+                        <strong>Dark Mode</strong>
+                    </button>
+                    <button id="uploadButton" class="header-button upload-button">
+                        <img src="https://cdn-icons-png.flaticon.com/512/1091/1091223.png" alt="Upload Icon" class="upload-icon" />
+                        <strong>Upload</strong>
+                    </button>
+                    <a href="#" id="downloadCSV" class="header-button">
+                        <img src="https://cdn-icons-png.flaticon.com/512/1091/1091007.png" alt="Download Icon" class="download-icon" />
+                        <strong>Download CSV</strong>
+                    </a>
+                    <a href="#" id="downloadJSON" class="header-button">
+                        <img src="https://cdn-icons-png.flaticon.com/512/1091/1091007.png" alt="Download Icon" class="download-icon" />
+                        <strong>Download JSON</strong>
+                    </a>
+                    <button id="postButton" class="header-button">
+                        <img src="https://cdn-icons-png.flaticon.com/512/2501/2501014.png" alt="Paper Plane Icon" class="post-icon" />
+                        <strong>POST</strong>
+                    </button>
                 </div>
             </div>
-            <!-- New Upload Button -->
-            <button id="uploadButton" class="header-button upload-button">
-                <span class="upload-icon"><i class="fas fa-upload"></i></span>
-                Upload
-            </button>
-            <button id="darkModeToggle" class="header-button">
-                <img src="https://cdn-icons-png.flaticon.com/512/439/439842.png" alt="Light Mode Icon" class="dark-mode-icon" />
-            </button>
         </div>
     </header>
-     <!-- New Drag and Drop Area -->
+    <!-- New Drag and Drop Area -->
     <div id="dragDropArea" class="drag-drop-area">
         <p>Drag & Drop ESL or SDAT files here</p>
         <button id="browseButton" class="header-button">Browse Files</button>
