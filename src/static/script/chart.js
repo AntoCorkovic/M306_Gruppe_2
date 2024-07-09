@@ -140,11 +140,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     downloadCSV.addEventListener('click', function() {
-        window.location.href = '/download/csv';
+        window.location.href = '/download/csv/all';
     });
 
     downloadJSON.addEventListener('click', function() {
-        window.location.href = '/download/json';
+        window.location.href = '/download/json/all';
     });
 
 
