@@ -3,6 +3,7 @@ from flask import Flask, render_template, jsonify, request, send_file
 from io import BytesIO
 from converter import Converter
 from src.parser import Parser
+import zipfile
 
 app = Flask(__name__)
 
@@ -10,35 +11,47 @@ counterstands = None
 consumptionvalues = None
 
 
-@app.route('/download/csv')
-def download_csv():
-    global counterstands
-    if counterstands is None:
-        return jsonify({"error": "Data not loaded"}), 400
-
+@app.route('/download/csv/all')
+def download_all_csv():
+    parser = Parser()
     converter = Converter()
-    output = BytesIO()
-    converter.export_counterstands_to_csv(counterstands, output)
-    output.seek(0)
-    return send_file(output,
-                     mimetype='text/csv',
+
+    # Parse data for all sensor IDs
+    counterstands = parser.parse_counterstands()
+
+    # Create a ZIP file in memory
+    memory_file = BytesIO()
+    with zipfile.ZipFile(memory_file, 'w') as zf:
+        for sensor_id in converter.sensor_ids:
+            csv_data = BytesIO()
+            converter.export_to_csv(counterstands, csv_data, sensor_id)
+            csv_data.seek(0)
+            zf.writestr(f"{sensor_id}.csv", csv_data.getvalue())
+
+    memory_file.seek(0)
+    return send_file(memory_file,
+                     mimetype='application/zip',
                      as_attachment=True,
-                     download_name='counterstands.csv')
+                     download_name='all_sensor_data.zip')
 
-@app.route('/download/json')
-def download_json():
-    global counterstands
-    if counterstands is None:
-        return jsonify({"error": "Data not loaded"}), 400
 
+@app.route('/download/json/all')
+def download_all_json():
+    parser = Parser()
     converter = Converter()
-    output = BytesIO()
-    converter.export_counterstands_to_json(counterstands, output)
-    output.seek(0)
-    return send_file(output,
+
+    # Parse data for all sensor IDs
+    counterstands = parser.parse_counterstands()
+
+    # Create JSON data for all sensors
+    json_data = BytesIO()
+    converter.export_to_json(counterstands, json_data)
+    json_data.seek(0)
+
+    return send_file(json_data,
                      mimetype='application/json',
                      as_attachment=True,
-                     download_name='counterstands.json')
+                     download_name='all_sensor_data.json')
 
 
 @app.route('/chart')
