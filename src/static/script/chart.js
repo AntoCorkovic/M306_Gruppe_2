@@ -214,7 +214,8 @@ document.addEventListener("DOMContentLoaded", function () {
                                     return `${label}: ${value}%`;
                                 }
                             }
-                        }
+                        },
+
                     }
                 };
 
@@ -476,7 +477,7 @@ for (let i = 0; i < timeBlocks.length; i++) {
                 });
 
 
-                const maxPointsLine = 75;
+                const maxPointsLine = 300;
                 const compactedInflowLine = compactData(inflowData, timeLabels, maxPointsLine);
                 const compactedOutflowLine = compactData(outflowData, timeLabels, maxPointsLine);
 
