@@ -108,11 +108,12 @@ body {
 }
 
 #total-inflow-value {
-    color: var(--purple-color);
+    color: #4BC0C0;
 }
 
 #total-outflow-value {
-    color: #4BC0C0;
+
+    color: var(--purple-color);
 }
 
 .info-box:last-child {
