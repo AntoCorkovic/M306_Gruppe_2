@@ -3,11 +3,11 @@ import xml.etree.ElementTree as elementTree
 
 from werkzeug.datastructures import FileStorage
 
-from src.models.counterstands import *
-from src.models.consumptionvalues import *
+from models.counterstands import *
+from models.consumptionvalues import *
 from datetime import timedelta
 from typing import List
-from src.models.consumptionvalues import Observation
+from models.consumptionvalues import Observation
 
 
 class Parser:

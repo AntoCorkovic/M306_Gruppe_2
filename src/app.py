@@ -2,8 +2,8 @@ import requests
 from datetime import datetime, timedelta
 from flask import Flask, render_template, jsonify, request, send_file
 from io import BytesIO
-from src.converter import Converter
-from src.parser import Parser
+from converter import Converter
+from parser import Parser
 import zipfile
 
 app = Flask(__name__)

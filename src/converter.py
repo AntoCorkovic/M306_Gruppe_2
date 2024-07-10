@@ -1,7 +1,7 @@
 import csv
 import json
 from typing import List, BinaryIO
-from src.models.counterstands import Counterstands
+from models.counterstands import Counterstands
 from io import StringIO
 
 
