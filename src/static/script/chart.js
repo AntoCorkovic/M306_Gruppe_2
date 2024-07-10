@@ -5,10 +5,8 @@ document.addEventListener("DOMContentLoaded", function () {
     const combinedCtx = document.getElementById('combinedChart').getContext('2d');
     const barCtx = document.getElementById('barChart').getContext('2d');
     const lineCtx = document.getElementById('lineChart').getContext('2d');
-    const downloadButton = document.getElementById('downloadButton');
     const downloadCSV = document.getElementById('downloadCSV');
     const downloadJSON = document.getElementById('downloadJSON');
-    const dropdownContent = document.querySelector('.dropdown-content');
     const darkModeToggle = document.getElementById('darkModeToggle');
     const pieCtx = document.getElementById('pieChart').getContext('2d');
     const dragDropArea = document.getElementById('dragDropArea');
@@ -16,7 +14,26 @@ document.addEventListener("DOMContentLoaded", function () {
     const browseButton = document.getElementById('browseButton');
     const submitButton = document.getElementById('submitButton');
     const uploadButton = document.getElementById('uploadButton');
+    const postButton = document.getElementById('postButton'); // Added postButton reference
 
+    const accountDropdownButton = document.getElementById('accountDropdownButton');
+    const accountDropdownContent = document.querySelector('.account-dropdown-content');
+
+    accountDropdownButton.addEventListener('click', function() {
+        accountDropdownContent.classList.toggle('show');
+    });
+
+    window.addEventListener('click', function(event) {
+        if (!event.target.matches('.account-button') && !event.target.closest('.account-dropdown-content')) {
+            if (accountDropdownContent.classList.contains('show')) {
+                accountDropdownContent.classList.remove('show');
+            }
+        }
+    });
+
+    accountDropdownContent.addEventListener('click', function(event) {
+        event.stopPropagation();
+    });
 
     let combinedChart = null;
     let barChart = null;
@@ -267,10 +284,6 @@ document.addEventListener('click', function(e) {
                 return response.json();
             });
     };
-
-    downloadButton.addEventListener('click', function () {
-        dropdownContent.classList.toggle('show');
-    });
 
     const loadData = (start, end) => {
         return fetchChartData(start, end);
