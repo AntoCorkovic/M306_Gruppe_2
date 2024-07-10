@@ -1,7 +1,5 @@
 import sys
 import os
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
 import pytest
 import json
 from io import BytesIO
@@ -10,6 +8,8 @@ from src.app import app
 from src.parser import Parser
 from src.models.counterstands import Counterstands, TimePeriod, ValueRow
 from src.models.consumptionvalues import Consumptionvalues, Observation, InflowAndOutflow
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 
 @pytest.fixture
@@ -102,7 +102,6 @@ def test_chart_data(client, mock_parser):
     assert 'timeLabels' in data
     assert 'counterstandOfInflowAtStart' in data
     assert 'counterstandOfOutflowAtStart' in data
-
 
 
 def test_upload_chart_data_no_files(client):
