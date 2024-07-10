@@ -1,3 +1,4 @@
+import os
 from datetime import datetime, timedelta
 from flask import Flask, render_template, jsonify, request, send_file
 from io import BytesIO
@@ -87,6 +88,86 @@ def chart_data():
 
     inflow_data = [obs.Volume for obs in inflow_observations]
     outflow_data = [obs.Volume for obs in outflow_observations]
+    time_labels = [(startdatetime + timedelta(minutes=15 * i)).strftime('%d-%m-%Y %H:%M') for i in
+                   range(len(inflow_data))]
+
+    total_inflow = round(sum(inflow_data), 2)
+    total_outflow = round(sum(outflow_data), 2)
+    procent_inflow = round(total_inflow / (total_inflow + total_outflow) * 100, 2)
+    procent_outflow = round(total_outflow / (total_inflow + total_outflow) * 100, 2)
+
+    data = {
+        'inflowData': inflow_data,
+        'outflowData': outflow_data,
+        'timeLabels': time_labels,
+        'counterstandOfInflowAtStart': counterstand_of_inflow_at_start,
+        'counterstandOfOutflowAtStart': counterstand_of_outflow_at_start,
+        'totalInflow': total_inflow,
+        'totalOutflow': total_outflow,
+        'procentInflow': procent_inflow,
+        'procentOutflow': procent_outflow,
+        "startdatetime": startdatetime,
+        "enddatetime": enddatetime,
+    }
+
+    return jsonify(data)
+
+
+@app.route('/uploadchartdata', methods=['POST'])
+def uploadchartdata():
+    if 'files' not in request.files:
+        return jsonify({'error': 'No file part'})
+
+    files = request.files.getlist('files')
+    if not files:
+        return jsonify({'error': 'No files uploaded'})
+
+    esl_files = []
+    sdat_files = []
+
+    for file in files:
+        if file and file.filename.endswith('.xml'):
+            if 'sdat' in file.filename.lower():
+                sdat_files.append(file)
+            elif 'esl' in file.filename.lower():
+                esl_files.append(file)
+
+    if len(esl_files) == 0 or len(sdat_files) == 0:
+        return jsonify({'error': 'Please upload at least one ESL file and one SDAT file.'})
+
+    parser = Parser()
+
+    counterstandsupload = parser.parse_counterstands_for_upload(esl_files)
+    consumptionvaluesupload = parser.parse_consumptionvalues_for_upload(sdat_files)
+
+    if counterstandsupload is None or consumptionvaluesupload is None:  # pragma: no cover
+        return jsonify({'error': 'Failed to parse uploaded files'})
+
+    startdatetime = datetime.strptime("02.04.2019 23:00", "%d.%m.%Y %H:%M")
+    enddatetime = datetime.strptime("03.04.2019 21:00", "%d.%m.%Y %H:%M")
+
+   # if len(consumptionvaluesupload.Inflows) > 0:
+   #     startdatetime = consumptionvaluesupload.Inflows[0].StartDateTime
+   #     enddatetime = consumptionvaluesupload.Inflows[0].EndDateTime
+   # else:
+   #     startdatetime = consumptionvaluesupload.Outflows[0].StartDateTime
+   #     enddatetime = consumptionvaluesupload.Outflows[0].EndDateTime
+
+    if(len(consumptionvaluesupload.Inflows) > 0):
+        inflow_observations = parser.get_observations_for_specific_duration(startdatetime, enddatetime, consumptionvaluesupload.Inflows)
+        counterstand_of_inflow_at_start = parser.get_counter_stand(startdatetime, counterstandsupload,consumptionvaluesupload.Inflows, {"1-1:1.8.1", "1-1:1.8.2"})
+        inflow_data = [obs.Volume for obs in inflow_observations]
+    if(len(consumptionvaluesupload.Outflows) > 0):
+        outflow_observations = parser.get_observations_for_specific_duration(startdatetime, enddatetime,
+                                                                         consumptionvaluesupload.Outflows)
+        counterstand_of_outflow_at_start = parser.get_counter_stand(startdatetime, counterstandsupload,
+                                                                    consumptionvaluesupload.Outflows,
+                                                                    {"1-1:2.8.1", "1-1:2.8.2"})
+
+        outflow_data = [obs.Volume for obs in outflow_observations]
+
+
+
     time_labels = [(startdatetime + timedelta(minutes=15 * i)).strftime('%d-%m-%Y %H:%M') for i in
                    range(len(inflow_data))]
 

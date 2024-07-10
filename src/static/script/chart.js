@@ -11,10 +11,11 @@ document.addEventListener("DOMContentLoaded", function () {
     const dropdownContent = document.querySelector('.dropdown-content');
     const darkModeToggle = document.getElementById('darkModeToggle');
     const pieCtx = document.getElementById('pieChart').getContext('2d');
-    const uploadButton = document.getElementById('uploadButton');
     const dragDropArea = document.getElementById('dragDropArea');
-    const browseButton = document.getElementById('browseButton');
     const fileInput = document.getElementById('fileInput');
+    const browseButton = document.getElementById('browseButton');
+    const submitButton = document.getElementById('submitButton');
+    const uploadButton = document.getElementById('uploadButton');
 
 
     let combinedChart = null;
@@ -97,6 +98,10 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 
+
+
+    let filesToUpload = [];
+
     uploadButton.addEventListener('click', function() {
         dragDropArea.classList.add('active');
     });
@@ -105,7 +110,9 @@ document.addEventListener("DOMContentLoaded", function () {
         fileInput.click();
     });
 
-    fileInput.addEventListener('change', handleFiles);
+    fileInput.addEventListener('change', function(e) {
+        handleFiles(e.target.files);
+    });
 
     dragDropArea.addEventListener('dragover', function(e) {
         e.preventDefault();
@@ -122,21 +129,76 @@ document.addEventListener("DOMContentLoaded", function () {
         handleFiles(e.dataTransfer.files);
     });
 
-    function handleFiles(files) {
-        // Here you would process the files
-        console.log('Files to upload:', files);
-        // You can add your file processing logic here
+    submitButton.addEventListener('click', function() {
+        handleFilesSubmission();
+    });
 
-        // Close the drag-drop area after file selection
-        dragDropArea.classList.remove('active');
+function handleFiles(files) {
+    const fileList = document.getElementById('fileList');
+    fileList.innerHTML = ''; // Clear any existing file list
+
+    for (let i = 0; i < files.length; i++) {
+        filesToUpload.push(files[i]);
+
+        // Create a new paragraph element for each file
+        const fileItem = document.createElement('p');
+        fileItem.textContent = files[i].name.substring(0, 4); // Show only the first 4 characters
+        fileItem.classList.add('file-item');
+        fileList.appendChild(fileItem);
     }
 
-    // Close drag-drop area when clicking outside
-    document.addEventListener('click', function(e) {
-        if (!dragDropArea.contains(e.target) && e.target !== uploadButton) {
-            dragDropArea.classList.remove('active');
+    console.log('Files ready for upload:', filesToUpload);
+}
+
+
+function handleFilesSubmission() {
+    const formData = new FormData();
+    let hasESL = false;
+    let hasSDAT = false;
+
+    for (let i = 0; i < filesToUpload.length; i++) {
+        formData.append('files', filesToUpload[i]);
+        if (filesToUpload[i].type === 'application/xml') {
+            // Assuming file type is used to differentiate; you can add additional checks if needed.
+            if (!hasESL) hasESL = true;
+            else if (!hasSDAT) hasSDAT = true;
         }
+    }
+
+    fetch('/uploadchartdata', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Files uploaded successfully:', data);
+        filesToUpload = []; // Reset the files array
+
+        // Set the daterange values
+        const start = moment(data.startdatetime).format('DD-MM-YYYY HH:mm');
+        const end = moment(data.enddatetime).format('DD-MM-YYYY HH:mm');
+        $('input[name="daterange"]').data('daterangepicker').setStartDate(start);
+        $('input[name="daterange"]').data('daterangepicker').setEndDate(end);
+
+        // Close the upload window
+        dragDropArea.classList.remove('active');
+
+        // Show loader and diagram
+        showLoader();
+        showDiagramm(data);
+    })
+    .catch(error => {
+        console.error('Error uploading files:', error);
     });
+}
+
+    // Close drag-drop area when clicking outside
+document.addEventListener('click', function(e) {
+    if (!dragDropArea.contains(e.target) && e.target !== uploadButton) {
+        dragDropArea.classList.remove('active');
+    }
+});
+
 
 
     downloadCSV.addEventListener('click', function() {
@@ -207,11 +269,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     showData("01-01-2019 00:00", "02-01-2019 23:00");
 
-    function showData(start, end) {
-        showLoader()
-        loadData(start, end)
-            .then(data => {
-                const compactData = (data, labels, maxPoints) => {
+    const showDiagramm = (data) => {
+                        const compactData = (data, labels, maxPoints) => {
                     const interval = Math.max(1, Math.floor(data.length / maxPoints));
                     const compactedData = [];
                     const compactedLabels = [];
@@ -662,11 +721,12 @@ for (let i = 0; i < timeBlocks.length; i++) {
                 // Display the time difference
                 time_difference.innerText = `${totalDays} d ${remainingHours} h`;
                 hideLoader()
-            })
-            .catch(error => {
-                hideLoader()
-                console.error('Error fetching data:', error);
-            });
+    }
+
+    function showData(start, end) {
+        showLoader()
+        loadData(start, end).then(data => {showDiagramm(data)})
+
     }
 
 });

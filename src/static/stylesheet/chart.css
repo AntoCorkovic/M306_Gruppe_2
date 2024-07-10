@@ -398,6 +398,21 @@ body.dark-mode .dark-mode-icon {
     background-color: #0056b3;
 }
 
+.file-list {
+    margin-top: 10px;
+    border-top: 1px solid #ccc;
+    padding-top: 10px;
+    max-height: 100px; /* To limit the height */
+    overflow-y: auto; /* To enable scrolling if there are many files */
+}
+
+.file-item {
+    font-size: 14px;
+    margin: 5px 0;
+    white-space: nowrap; /* Prevent text from wrapping */
+}
+
+
 .dropdown {
     position: relative;
     display: inline-block;
