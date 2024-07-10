@@ -143,15 +143,8 @@ def uploadchartdata():
     if counterstandsupload is None or consumptionvaluesupload is None:  # pragma: no cover
         return jsonify({'error': 'Failed to parse uploaded files'})
 
-    startdatetime = datetime.strptime("02.04.2019 23:00", "%d.%m.%Y %H:%M")
-    enddatetime = datetime.strptime("03.04.2019 21:00", "%d.%m.%Y %H:%M")
+    startdatetime, enddatetime = find_start_and_end_datetime(consumptionvaluesupload, counterstandsupload)
 
-   # if len(consumptionvaluesupload.Inflows) > 0:
-   #     startdatetime = consumptionvaluesupload.Inflows[0].StartDateTime
-   #     enddatetime = consumptionvaluesupload.Inflows[0].EndDateTime
-   # else:
-   #     startdatetime = consumptionvaluesupload.Outflows[0].StartDateTime
-   #     enddatetime = consumptionvaluesupload.Outflows[0].EndDateTime
 
     if(len(consumptionvaluesupload.Inflows) > 0):
         inflow_observations = parser.get_observations_for_specific_duration(startdatetime, enddatetime, consumptionvaluesupload.Inflows)
@@ -192,6 +185,31 @@ def uploadchartdata():
 
     return jsonify(data)
 
+
+def find_start_and_end_datetime(inflow_and_outflow, counterstands):
+    if not inflow_and_outflow.Inflows:
+        raise ValueError("No inflows available to determine startdatetime")
+
+    # Step 1: The startdatetime is taken from the first inflow item
+    initial_startdatetime = inflow_and_outflow.Inflows[0].StartDateTime
+
+    # Step 2: Find the next suitable enddatetime in counterstands that is after initial_startdatetime
+    startdatetime = None
+    for counterstand in counterstands:
+        for time_period in counterstand.timePeriods:
+            if time_period.end > initial_startdatetime:
+                startdatetime = time_period.end
+                break
+        if startdatetime:
+            break
+
+    if startdatetime is None:
+        raise ValueError("No suitable counterstand found after the initial startdatetime")
+
+    # Step 3: The enddatetime is the last enddate of the last item in the inflows list
+    enddatetime = inflow_and_outflow.Inflows[-1].EndDateTime
+
+    return startdatetime, enddatetime
 
 if __name__ == '__main__':
     app.run()

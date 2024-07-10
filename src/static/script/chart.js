@@ -140,15 +140,28 @@ function handleFiles(files) {
     for (let i = 0; i < files.length; i++) {
         filesToUpload.push(files[i]);
 
-        // Create a new paragraph element for each file
-        const fileItem = document.createElement('p');
-        fileItem.textContent = files[i].name.substring(0, 4); // Show only the first 4 characters
+        // Create a new div element for each file
+        const fileItem = document.createElement('div');
         fileItem.classList.add('file-item');
+
+        // Create an icon for the file
+        const fileIcon = document.createElement('i');
+        fileIcon.classList.add('fas', 'fa-file-alt'); // Using FontAwesome for file icon
+
+        // Create a text node with the shortened file name (up to 8 characters)
+        const fileName = document.createTextNode(files[i].name.substring(0, 8));
+
+        // Append the icon and text to the file item
+        fileItem.appendChild(fileIcon);
+        fileItem.appendChild(fileName);
+
+        // Append the file item to the file list
         fileList.appendChild(fileItem);
     }
 
     console.log('Files ready for upload:', filesToUpload);
 }
+
 
 
 function handleFilesSubmission() {
@@ -172,7 +185,9 @@ function handleFilesSubmission() {
     .then(response => response.json())
     .then(data => {
         console.log('Files uploaded successfully:', data);
-        filesToUpload = []; // Reset the files array
+
+        // Reset the file input and file list
+        resetFileInput();
 
         // Set the daterange values
         const start = moment(data.startdatetime).format('DD-MM-YYYY HH:mm');
@@ -190,6 +205,14 @@ function handleFilesSubmission() {
     .catch(error => {
         console.error('Error uploading files:', error);
     });
+}
+
+
+function resetFileInput() {
+    fileInput.value = '';
+    filesToUpload = [];
+    const fileList = document.getElementById('fileList');
+    fileList.innerHTML = ''; // Clear the displayed file list
 }
 
     // Close drag-drop area when clicking outside
