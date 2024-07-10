@@ -1,3 +1,7 @@
+import sys
+import os
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 import pytest
 from datetime import datetime
 from io import BytesIO
@@ -5,6 +9,7 @@ import json
 import csv
 from src.models.counterstands import Counterstands, TimePeriod, ValueRow
 from src.converter import Converter
+
 
 
 @pytest.fixture
