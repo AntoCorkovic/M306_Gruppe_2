@@ -50,14 +50,15 @@
             </div>
         </div>
     </header>
-
-<div id="dragDropArea" class="drag-drop-area">
-    <p>Drag & Drop ESL and SDAT files here</p>
-    <button id="browseButton" class="header-button">Browse Files</button>
-    <input type="file" id="fileInput" accept=".xml" multiple style="display: none;">
-    <button id="submitButton" class="header-button">Submit</button>
-    <div id="fileList" class="file-list"></div> <!-- Container for the file list -->
-</div>
+    <div id="dragDropArea" class="drag-drop-area">
+        <p>Drag & Drop ESL and SDAT files onto the dashed area</p>
+        <div class="button-container">
+            <button id="browseButton" class="action-button">Browse Files</button>
+            <button id="submitButton" class="action-button">Submit</button>
+        </div>
+        <input type="file" id="fileInput" accept=".xml" multiple style="display: none;">
+        <div id="fileList" class="file-list"></div> <!-- Container for the file list -->
+    </div>
     <div class="content" id="content">
         <div class="main-wrapper">
             <div class="main-content bar-chart-wrapper">
