@@ -10,7 +10,7 @@ Dieses Projekt bietet eine Softwarelösung zur Analyse und Visualisierung von En
 ## Installation
 1. Navigieren Sie in das Projektverzeichnis:
    ```
-   cd energieagentur-buenzli
+   cd M306_Gruppe_2-main
    ```
 2. Installieren Sie die erforderlichen Pakete:
    ```
