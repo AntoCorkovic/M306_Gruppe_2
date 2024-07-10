@@ -1,4 +1,4 @@
-import os
+import requests
 from datetime import datetime, timedelta
 from flask import Flask, render_template, jsonify, request, send_file
 from io import BytesIO
@@ -114,7 +114,7 @@ def chart_data():
 
 
 @app.route('/uploadchartdata', methods=['POST'])
-def uploadchartdata():
+def upload_chart_data():
     if 'files' not in request.files:
         return jsonify({'error': 'No file part'})
 
@@ -145,21 +145,21 @@ def uploadchartdata():
 
     startdatetime, enddatetime = find_start_and_end_datetime(consumptionvaluesupload, counterstandsupload)
 
-
-    if(len(consumptionvaluesupload.Inflows) > 0):
-        inflow_observations = parser.get_observations_for_specific_duration(startdatetime, enddatetime, consumptionvaluesupload.Inflows)
-        counterstand_of_inflow_at_start = parser.get_counter_stand(startdatetime, counterstandsupload,consumptionvaluesupload.Inflows, {"1-1:1.8.1", "1-1:1.8.2"})
+    if (len(consumptionvaluesupload.Inflows) > 0):
+        inflow_observations = parser.get_observations_for_specific_duration(startdatetime, enddatetime,
+                                                                            consumptionvaluesupload.Inflows)
+        counterstand_of_inflow_at_start = parser.get_counter_stand(startdatetime, counterstandsupload,
+                                                                   consumptionvaluesupload.Inflows,
+                                                                   {"1-1:1.8.1", "1-1:1.8.2"})
         inflow_data = [obs.Volume for obs in inflow_observations]
-    if(len(consumptionvaluesupload.Outflows) > 0):
+    if (len(consumptionvaluesupload.Outflows) > 0):
         outflow_observations = parser.get_observations_for_specific_duration(startdatetime, enddatetime,
-                                                                         consumptionvaluesupload.Outflows)
+                                                                             consumptionvaluesupload.Outflows)
         counterstand_of_outflow_at_start = parser.get_counter_stand(startdatetime, counterstandsupload,
                                                                     consumptionvaluesupload.Outflows,
                                                                     {"1-1:2.8.1", "1-1:2.8.2"})
 
         outflow_data = [obs.Volume for obs in outflow_observations]
-
-
 
     time_labels = [(startdatetime + timedelta(minutes=15 * i)).strftime('%d-%m-%Y %H:%M') for i in
                    range(len(inflow_data))]
@@ -210,6 +210,40 @@ def find_start_and_end_datetime(inflow_and_outflow, counterstands):
     enddatetime = inflow_and_outflow.Inflows[-1].EndDateTime
 
     return startdatetime, enddatetime
+
+
+@app.route('/post-data', methods=['POST'])
+def post_data():
+    parser = Parser()
+    converter = Converter()
+
+    # Parse data for all sensor IDs
+    counterstands = parser.parse_counterstands()
+
+    # Create JSON data for all sensors
+    json_data = BytesIO()
+    converter.export_to_json(counterstands, json_data)
+    json_data.seek(0)
+
+    # Read the JSON data
+    data = json_data.getvalue()
+
+    # URL of the server to send the data to
+    target_url = "https://example.com/api/receive-data"  # Replace with actual server URL
+
+    try:
+        # Send POST request to the target server
+        response = requests.post(target_url, data=data, headers={'Content-Type': 'application/json'})
+
+        # Check if the request was successful
+        if response.status_code == 200:
+            return jsonify({"message": "Data sent successfully", "server_response": response.json()}), 200
+        else:
+            return jsonify({"error": "Failed to send data", "status_code": response.status_code}), 500
+
+    except requests.RequestException as e:
+        return jsonify({"error": "Request failed", "details": str(e)}), 500
+
 
 if __name__ == '__main__':
     app.run()
