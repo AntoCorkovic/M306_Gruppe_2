@@ -1,107 +1,74 @@
-# PowerStream
+# Energieagentur Bünzli
+
+## Beschreibung
+Dieses Projekt bietet eine Softwarelösung zur Analyse und Visualisierung von Energieverbrauchsdaten. Es ermöglicht das Einlesen von SDAT- und ESL-Dateien, die Umrechnung von Verbrauchswerten in Zählerstände und die Darstellung der Daten in verschiedenen Formaten.
+
+## Voraussetzungen
+- Python 3.7 oder höher
+- pip (Python Package Installer)
+
+## Installation
+1. Navigieren Sie in das Projektverzeichnis:
+   ```
+   cd energieagentur-buenzli
+   ```
+2. Installieren Sie die erforderlichen Pakete:
+   ```
+   pip install -r requirements.txt
+   ```
+
+## Verwendung
+1. Starten Sie die Anwendung:
+   ```
+   python app.py
+   ```
+2. Öffnen Sie einen Webbrowser und navigieren Sie zu:
+   ```
+   http://127.0.0.1:5000/chart
+   ```
+
+## Funktionen
+- Einlesen von SDAT-Dateien
+- Einlesen von ESL-Dateien
+- Umrechnung von Verbrauchswerten in Zählerstände
+- Visualisierung der Daten in einem Verbrauchsdiagramm
+- Visualisierung der Daten in einem Zählerstanddiagramm
+- Export der Daten als CSV und JSON
+- Übermittlung der Daten via HTTP POST-Request an einen Server
+
+## Zusätzliche Features (experimentell)
+- Drag-and-Drop-Funktion zum Hochladen weiterer Daten
+- Diagramm mit täglichem Durchschnittsverbrauch und -einspeisung über den ausgewählten Zeitraum
 
 
-## Wie starten
-1. Pull
-2. Auf Branch "add-date-pciker-functionality" auschecken
-3. app.py laufen lassen
-4. Folgende Seite aufrufen: http://127.0.0.1:5000/chart
-5. Bestaunen und bitte nichts am Code ändern danke
+## Entwicklung
 
-Wenn jeman Änderungen vornehmen will diese auf einem anderen Branch machen!
+### Tests ausführen
 
-## Softwareumfang
-Entwerfen und Programmieren Sie eine Software welche:
-Muss:
-• sdat-Files einlesen kann
-• ESL-Files einlesen kann
-• Die Verbrauchswerte in Zählerstände umrechnen kann
-• Die Daten in einem Verbrauchsdiagramm visualisieren kann
-• Die Daten in einem Zählerstandsdiagramm visualisieren kann
-• Die Daten als csv exportieren kann
+Um die Tests für dieses Projekt auszuführen, folgen Sie bitte diesen Schritten:
 
-## Programmier Tipps vom Bünzli
-ID735 = Einspeisung
-<br>
-ID742 = Bezug
+1. Stellen Sie sicher, dass Sie sich im Hauptverzeichnis des Projekts befinden.
 
+2. Führen Sie den folgenden Befehl aus, um alle Tests zu starten:
+   ```
+   pytest tests/
+   ```
 
+#### Wichtiger Hinweis zu Importpfaden:
 
-### Eckpunkte sdat-File
-```ruby
-<rsm:DocumentID>eslevu156407_BR2294_ID735</rsm:DocumentID>
-```
-> Die DocumentID ist die eindeutige Identifizierung des Zählers.
-```ruby
-<rsm:Interval>
-<rsm:StartDateTime>2019-09-24T22:00:00Z</rsm:StartDateTime>
-<rsm:EndDateTime>2019-09-25T22:00:00Z</rsm:EndDateTime>
-</rsm:Interval>
-```
-> Innerhalb der Interval-Tags finden Sie Start und Endzeit in UTC der Zählerwerte.
-```ruby
-<rsm:Resolution>
-<rsm:Resolution>15</rsm:Resolution>
-<rsm:Unit>MIN</rsm:Unit>
-</rsm:Resolution>
-```
-> Im Resolution-Tag steht die Auflösung (Zeitlicher Abstand der einzelnen Messwerte)
-```ruby
-<rsm:Observation>
-  <rsm:Position>
-    <rsm:Sequence>1</rsm:Sequence>
-```
-> Gibt die Nummer des Messwertes an.
-```ruby
-</rsm:Position>
-<rsm:Volume>2.250</rsm:Volume>
-```
-> Gibt die gemessene Menge/Volumen innerhalb der letzten Resolution wieder
-```ruby
-<rsm:Condition>21</rsm:Condition>
-</rsm:Observation>
-```
-> Am Ende des Files befinden sich mehrere Observation-Tags. Diese geben jeweils den Messwert im jeweiligen Zeitintervall an.
+- Für den GitHub Workflow wurden die Importpfade in den Testdateien angepasst, indem das Präfix `src.` entfernt wurde.
+- Wenn Sie die Tests lokal ausführen möchten, müssen Sie möglicherweise das `src.`-Präfix in den Importanweisungen der Testdateien wieder hinzufügen.
 
-
-
-### Eckpunkte ESL-File
-
-```ruby
-<TimePeriod end="2019-01-01T00:00:00">
-```
-> Der Tag TimePeriod gibt an, von wann die Messwerte stammen.
-```ruby
-  <ValueRow obis="1-1:1.8.1" value="4755.3000" status="V"/>
-  <ValueRow obis="1-1:1.8.2" value="14460.9000" status="V"/>
-  <ValueRow obis="1-1:2.8.1" value="8258.1000" status="V"/>
-  <ValueRow obis="1-1:2.8.2" value="3543.1000" status="V"/>
-  <ValueRow obis="1-1:5.8.1" value="293.0000" status="V"/>
-  <ValueRow obis="1-1:5.8.2" value="580.0000" status="V"/>
-  <ValueRow obis="1-1:6.8.1" value="33.0000" status="V"/>
-  <ValueRow obis="1-1:6.8.2" value="8.0000" status="V"/>
-  <ValueRow obis="1-1:7.8.1" value="406.0000" status="V"/>
-  <ValueRow obis="1-1:7.8.2" value="163.0000" status="V"/>
-  <ValueRow obis="1-1:8.8.1" value="500.0000" status="V"/>
-  <ValueRow obis="1-1:8.8.2" value="1685.0000" status="V"/>
-```
-> Pro Zähler, welcher über den obis-code identifiziert wird, gibt es einen value welcher für den Zählerstand zum Zeitpunkt in der TimePeriod steht.
-```ruby
-</TimePeriod>
+Beispiel für eine lokale Testdatei:
+```python
+from src.models.counterstands import Counterstands, TimePeriod, ValueRow
+from src.parser import Parser
 ```
 
+Beispiel für die GitHub Workflow-Version:
+```python
+from models.counterstands import Counterstands, TimePeriod, ValueRow
+from parser import Parser
+```
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+Stellen Sie sicher, dass Sie die Importpfade entsprechend anpassen, bevor Sie die Tests in Ihrer lokalen Umgebung ausführen.

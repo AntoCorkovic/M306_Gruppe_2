@@ -80,6 +80,7 @@ def mock_parser(monkeypatch):
 def mock_converter(monkeypatch):
     class MockConverter:
         sensor_ids = ["ID742", "ID735"]
+
         def export_to_csv(self, counterstands, file, sensor_id):
             file.write(b"mocked csv data")
 

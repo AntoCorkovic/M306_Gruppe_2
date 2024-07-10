@@ -1,6 +1,6 @@
 import requests
 from datetime import datetime, timedelta
-from flask import Flask, render_template, jsonify, request, send_file
+from flask import Flask, render_template, jsonify, request, send_file, redirect, url_for
 from io import BytesIO
 from converter import Converter
 from parser import Parser
@@ -55,6 +55,7 @@ def download_all_json():
                      download_name='all_sensor_data.json')
 
 
+@app.route('/')  # Map the root URL '/' to the chart function
 @app.route('/chart')
 def chart():
     return render_template('frontend/chart.html')
