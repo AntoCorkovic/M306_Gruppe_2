@@ -1,5 +1,8 @@
 import os
 import xml.etree.ElementTree as elementTree
+
+from werkzeug.datastructures import FileStorage
+
 from src.models.counterstands import *
 from src.models.consumptionvalues import *
 from datetime import timedelta
@@ -101,6 +104,105 @@ class Parser:
                     continue
             except Exception as e:
                 continue
+        inflowandoutflowlist.Inflows.sort(key=lambda x: x.StartDateTime)
+        inflowandoutflowlist.Outflows.sort(key=lambda x: x.StartDateTime)
+        return inflowandoutflowlist
+
+    def parse_counterstands_for_upload(self, files: List[FileStorage]) -> List[Counterstands]:
+        counterstands_dict = {}
+
+        for file in files:
+            try:
+                # Read the file content from the FileStorage object
+                file_content = file.read()
+                tree = elementTree.ElementTree(elementTree.fromstring(file_content))
+                root = tree.getroot()
+
+                # Parsing Header
+                header_elem = root.find('Header')
+                created_str = header_elem.get('created')
+                created = datetime.strptime(created_str, "%Y-%m-%dT%H:%M:%S")
+                created_date = created.date()
+
+                # Check if there is already an entry for this date
+                if created_date not in counterstands_dict:
+                    counterstands_dict[created_date] = Counterstands(created=created)
+
+                for time_period_elem in root.findall('.//TimePeriod'):
+                    time_period = TimePeriod(end=datetime.strptime(time_period_elem.get('end'), "%Y-%m-%dT%H:%M:%S"))
+
+                    # Parsing ValueRows
+                    for value_row_elem in time_period_elem.findall('ValueRow'):
+                        value_row = ValueRow(
+                            obis=value_row_elem.get('obis'),
+                            value=float(value_row_elem.get('value')),
+                            status=value_row_elem.get('status'),
+                            valueTimeStamp=value_row_elem.get('valueTimeStamp')
+                        )
+                        time_period.valueRows.append(value_row)
+
+                    counterstands_dict[created_date].timePeriods.append(time_period)
+
+            except elementTree.ParseError as e:
+                print(f"Error parsing {file.filename}: {e}")
+            except Exception as e:
+                print(f"Unexpected error with {file.filename}: {e}")
+
+        counterstands_list = list(counterstands_dict.values())
+        counterstands_list.sort(key=lambda x: x.created)
+
+        return counterstands_list
+
+    def parse_consumptionvalues_for_upload(self, files: List[FileStorage]) -> InflowAndOutflow:
+        inflowandoutflowlist = InflowAndOutflow()
+        ns = {'rsm': 'http://www.strom.ch'}
+
+        for file in files:
+            try:
+                # Read the file content from the FileStorage object
+                file_content = file.read()
+                tree = elementTree.ElementTree(elementTree.fromstring(file_content))
+                root = tree.getroot()
+
+                consumption_values = Consumptionvalues()
+
+                # Parsing HeaderInformation
+                header_info_elem = root.find('rsm:ValidatedMeteredData_HeaderInformation', ns)
+                instance_doc_elem = header_info_elem.find('rsm:InstanceDocument', ns)
+                consumption_values.DocumentID = str(instance_doc_elem.find('rsm:DocumentID', ns).text),
+
+                # Parsing MeteringData
+                metering_data_elem = root.find('rsm:MeteringData', ns)
+
+                observations = []
+                for observation_elem in metering_data_elem.findall('rsm:Observation', ns):
+                    observation = Observation(
+                        Sequence=int(observation_elem.find('rsm:Position/rsm:Sequence', ns).text),
+                        Volume=float(observation_elem.find('rsm:Volume', ns).text)
+                    )
+                    observations.append(observation)
+                consumption_values.Observations = observations
+                consumption_values.StartDateTime = datetime.strptime(
+                    metering_data_elem.find('rsm:Interval/rsm:StartDateTime', ns).text, "%Y-%m-%dT%H:%M:%SZ")
+                consumption_values.EndDateTime = datetime.strptime(
+                    metering_data_elem.find('rsm:Interval/rsm:EndDateTime', ns).text, "%Y-%m-%dT%H:%M:%SZ")
+                consumption_values.Resolution = int(metering_data_elem.find('rsm:Resolution/rsm:Resolution', ns).text)
+                consumption_values.Unit = metering_data_elem.find('rsm:Resolution/rsm:Unit', ns).text
+
+                if consumption_values.DocumentID[0].split('_')[-1] == "ID735":
+                    if not any(existing.StartDateTime == consumption_values.StartDateTime for existing in
+                               inflowandoutflowlist.Outflows):
+                        inflowandoutflowlist.Outflows.append(consumption_values)
+                elif consumption_values.DocumentID[0].split('_')[-1] == "ID742":
+                    if not any(existing.StartDateTime == consumption_values.StartDateTime for existing in
+                               inflowandoutflowlist.Inflows):
+                        inflowandoutflowlist.Inflows.append(consumption_values)
+                else:
+                    continue
+            except Exception as e:
+                print(f"Error parsing {file.filename}: {e}")
+                continue
+
         inflowandoutflowlist.Inflows.sort(key=lambda x: x.StartDateTime)
         inflowandoutflowlist.Outflows.sort(key=lambda x: x.StartDateTime)
         return inflowandoutflowlist

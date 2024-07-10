@@ -4,7 +4,7 @@
 <Meter factoryNo="38157930" internalNo="38157930">
 <TimePeriod end="2019-01-01T00:00:00">
 <ValueRow obis="1-1:1.6.1" valueTimeStamp="2018-12-05T08:45:00" value="6.3000" status="V"/>
-<ValueRow obis="1-1:1.6.2" valueTimeStamp="2018-12-08T10:45:00" value="5.3000" status="V"/>
+<Valueow obis="1-1:1.6.2" valueTimeStamp="2018-12-08T10:45:00" value="5.3000" status="V"/>
 <ValueRow obis="1-1:1.8.1" value="4755.3000" status="V"/>
 <ValueRow obis="1-1:1.8.2" value="14460.9000" status="V"/>
 <ValueRow obis="1-1:2.6.1" valueTimeStamp="2018-12-22T12:00:00" value="1.4000" status="V"/>
