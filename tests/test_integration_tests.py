@@ -8,7 +8,7 @@ from io import BytesIO
 from datetime import datetime
 from app import app
 from parser import Parser
-from convterter import Converter
+from converter import Converter
 from models.counterstands import Counterstands, TimePeriod, ValueRow
 from models.consumptionvalues import Consumptionvalues, Observation, InflowAndOutflow
 
