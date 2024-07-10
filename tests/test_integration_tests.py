@@ -4,10 +4,10 @@ import pytest
 import json
 from io import BytesIO
 from datetime import datetime
-from src.app import app
-from src.parser import Parser
-from src.models.counterstands import Counterstands, TimePeriod, ValueRow
-from src.models.consumptionvalues import Consumptionvalues, Observation, InflowAndOutflow
+from app import app
+from parser import Parser
+from models.counterstands import Counterstands, TimePeriod, ValueRow
+from models.consumptionvalues import Consumptionvalues, Observation, InflowAndOutflow
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 

@@ -1,9 +1,9 @@
 import pytest
 from unittest.mock import patch, MagicMock
 from datetime import datetime
-from src.parser import Parser
-from src.models.counterstands import Counterstands, TimePeriod, ValueRow
-from src.models.consumptionvalues import Consumptionvalues, Observation
+from parser import Parser
+from models.counterstands import Counterstands, TimePeriod, ValueRow
+from models.consumptionvalues import Consumptionvalues, Observation
 import xml.etree.ElementTree as ET
 
 
