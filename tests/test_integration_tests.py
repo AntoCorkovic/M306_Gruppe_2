@@ -1,11 +1,14 @@
 import sys
 import os
+from unittest.mock import patch
+
 import pytest
 import json
 from io import BytesIO
 from datetime import datetime
 from app import app
 from parser import Parser
+from convterter import Converter
 from models.counterstands import Counterstands, TimePeriod, ValueRow
 from models.consumptionvalues import Consumptionvalues, Observation, InflowAndOutflow
 
@@ -73,15 +76,29 @@ def mock_parser(monkeypatch):
     monkeypatch.setattr(Parser, '__new__', lambda cls: MockParser())
 
 
-def test_download_all_csv(client):
-    response = client.get('/download/csv/all')
+@pytest.fixture
+def mock_converter(monkeypatch):
+    class MockConverter:
+        def export_to_csv(self, counterstands, file, sensor_id):
+            file.write(b"mocked csv data")
+
+        def export_to_json(self, counterstands, file):
+            file.write(b'{"mocked": "json data"}')
+
+    monkeypatch.setattr(Converter, '__new__', lambda cls: MockConverter())
+
+
+def test_download_all_csv(client, mock_parser, mock_converter):
+    with patch('os.listdir', return_value=['test_file.xml']):
+        response = client.get('/download/csv/all')
     assert response.status_code == 200
     assert response.headers['Content-Type'] == 'application/zip'
     assert response.headers['Content-Disposition'].startswith('attachment; filename=all_sensor_data.zip')
 
 
-def test_download_all_json(client):
-    response = client.get('/download/json/all')
+def test_download_all_json(client, mock_parser, mock_converter):
+    with patch('os.listdir', return_value=['test_file.xml']):
+        response = client.get('/download/json/all')
     assert response.status_code == 200
     assert response.headers['Content-Type'] == 'application/json'
     assert response.headers['Content-Disposition'].startswith('attachment; filename=all_sensor_data.json')
