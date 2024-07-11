@@ -3,8 +3,9 @@ from datetime import datetime, timedelta
 from flask import Flask, render_template, jsonify, request, send_file, redirect, url_for
 from io import BytesIO
 from converter import Converter
-from parser import Parser
 import zipfile
+
+from src.parser import Parser
 
 app = Flask(__name__)
 
